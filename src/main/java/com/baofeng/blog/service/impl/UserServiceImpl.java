@@ -1,8 +1,9 @@
 package com.baofeng.blog.service.impl;
 
-import com.baofeng.blog.dto.UserRegisterDTO;
+import com.baofeng.blog.dto.UserAuthDTO;
 import com.baofeng.blog.entity.User;
 import com.baofeng.blog.exception.DuplicateUserException;
+import com.baofeng.blog.exception.AuthException;
 import com.baofeng.blog.mapper.UserMapper;
 import com.baofeng.blog.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User registerUser(UserRegisterDTO registerDTO) {
+    public User registerUser(UserAuthDTO.RegisterRequest registerDTO) {
         // 检查用户名和邮箱唯一性
         checkUserUniqueness(registerDTO.username(), registerDTO.email());
         
@@ -45,4 +46,23 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateUserException("邮箱已被注册");
         }
     }
+    @Override
+    public User loginUser(UserAuthDTO.LoginRequest loginDTO) {
+        User user = userMapper.selectByUsernameOrEmail(loginDTO.username());
+        if (user == null) {
+            throw new AuthException("用户不存在");
+        }
+        if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
+            userMapper.incrementLoginAttempts(user.getId());
+            throw new AuthException("密码错误");
+        }
+
+        if (user.getStatus() == User.Status.BANNED) {
+            throw new AuthException("账户已被锁定");
+        }
+
+        userMapper.updateLoginInfo(user.getId());
+        return user;
+    }
+    
 } 

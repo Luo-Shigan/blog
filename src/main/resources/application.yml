@@ -14,3 +14,6 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 配置日志输出（可选）
     map-underscore-to-camel-case: true  # 开启下划线到驼峰命名的映射
     default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+jwt:
+  secret: "your-256-bit-secret-key-here-1234567890ABCDEF"
+  expiration: 86400000  # 24小时
