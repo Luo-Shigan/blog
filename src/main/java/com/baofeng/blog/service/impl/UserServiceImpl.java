@@ -50,15 +50,17 @@ public class UserServiceImpl implements UserService {
     public User loginUser(UserAuthDTO.LoginRequest loginDTO) {
         User user = userMapper.selectByUsernameOrEmail(loginDTO.username());
         if (user == null) {
-            throw new AuthException("用户不存在");
+            throw new AuthException(401,"用户不存在");
         }
-        if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
+        else if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
             userMapper.incrementLoginAttempts(user.getId());
-            throw new AuthException("密码错误");
+            throw new AuthException(402,"密码错误");
         }
-
-        if (user.getStatus() == User.Status.BANNED) {
-            throw new AuthException("账户已被锁定");
+        else if (user.getStatus() == User.Status.BANNED) {
+            throw new AuthException(403,"账户已被锁定");
+        }
+        else {
+            //什么都不做
         }
 
         userMapper.updateLoginInfo(user.getId());

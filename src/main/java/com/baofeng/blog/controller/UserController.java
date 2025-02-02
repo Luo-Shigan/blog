@@ -28,11 +28,15 @@ public class UserController {
         return ApiResponse.success(userService.registerUser(registerDTO));
     }
 
-
     @PostMapping("/login")
     public ApiResponse<String> login(@RequestBody @Valid UserAuthDTO.LoginRequest loginDTO) {
         User user = userService.loginUser(loginDTO);
-        String token = jwtTokenProvider.generateToken(user);
-        return ApiResponse.success(token);
+        if (user != null){
+            String token = jwtTokenProvider.generateToken(user);
+            return ApiResponse.success(token);
+        }else{
+            return ApiResponse.error(401, "登录失败");
+        }
+
     }
 } 
