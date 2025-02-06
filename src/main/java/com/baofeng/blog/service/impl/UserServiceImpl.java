@@ -6,6 +6,7 @@ import com.baofeng.blog.exception.DuplicateUserException;
 import com.baofeng.blog.exception.AuthException;
 import com.baofeng.blog.mapper.UserMapper;
 import com.baofeng.blog.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserMapper userMapper;
+    @Autowired
+    private UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserMapper userMapper, BCryptPasswordEncoder passwordEncoder) {
-        this.userMapper = userMapper;
+    public UserServiceImpl(BCryptPasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -50,11 +51,11 @@ public class UserServiceImpl implements UserService {
     public User loginUser(UserAuthDTO.LoginRequest loginDTO) {
         User user = userMapper.selectByUsernameOrEmail(loginDTO.username());
         if (user == null) {
-            throw new AuthException(401,"用户不存在");
+            throw new AuthException(400,"用户不存在");
         }
         else if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
             userMapper.incrementLoginAttempts(user.getId());
-            throw new AuthException(402,"密码错误");
+            throw new AuthException(400,"密码错误");
         }
         else if (user.getStatus() == User.Status.BANNED) {
             throw new AuthException(403,"账户已被锁定");
@@ -67,4 +68,9 @@ public class UserServiceImpl implements UserService {
         return user;
     }
     
+    @Override
+    public User getUserByUsername(String username) {
+        // 此处直接复用 UserMapper 中 selectByUsernameOrEmail 方法
+        return userMapper.selectByUsernameOrEmail(username);
+    }
 } 
