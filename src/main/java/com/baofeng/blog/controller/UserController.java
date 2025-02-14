@@ -5,6 +5,7 @@ import com.baofeng.blog.dto.UserAuthDTO;
 import com.baofeng.blog.service.UserService;
 import com.baofeng.blog.util.JwtTokenProvider;
 import com.baofeng.blog.entity.User;
+import com.baofeng.blog.dto.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -33,15 +34,24 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<String> login(@RequestBody @Valid UserAuthDTO.LoginRequest loginDTO) {
+    public ApiResponse<LoginResponse> login(@RequestBody @Valid UserAuthDTO.LoginRequest loginDTO) {
         User user = userService.loginUser(loginDTO);
-        if (user != null){
-            String token = jwtTokenProvider.generateToken(user);
-            return ApiResponse.success(token);
-        }else{
+        if (user != null) {
+            // 生成 token
+            String tokenValue = jwtTokenProvider.generateToken(user);
+            // 构造 Token 和 User 信息（内部类）
+            LoginResponse.User userInfo = new LoginResponse.User(
+                    user.getId(),
+                    user.getUsername()
+            );
+            // 封装并返回
+            LoginResponse response = new LoginResponse(tokenValue, userInfo);
+            return ApiResponse.success(response);
+        } else {
             return ApiResponse.error(401, "登录失败");
         }
     }
+
 
     /**
      * 此接口要求请求携带有效的 JWT Token，JwtAuthenticationFilter 已经在请求处理前解析并设置好了认证信息

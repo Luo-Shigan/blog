@@ -1,0 +1,24 @@
+package com.baofeng.blog.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * LoginResponse 直接将 token 定义为 String
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class LoginResponse {
+    private String token;
+    private User user;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class User {
+        private Long id;
+        private String username;
+    }
+} 

@@ -84,7 +84,8 @@
 
     <!-- 登录相关操作 -->
     <select id="selectByUsernameOrEmail" resultMap="userResultMap">
-        SELECT * FROM users
+        SELECT id, username, password, status
+        FROM users
         WHERE username = #{account} OR email = #{account}
         LIMIT 1
     </select>
