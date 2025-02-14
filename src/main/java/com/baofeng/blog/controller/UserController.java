@@ -6,6 +6,7 @@ import com.baofeng.blog.service.UserService;
 import com.baofeng.blog.util.JwtTokenProvider;
 import com.baofeng.blog.entity.User;
 import com.baofeng.blog.dto.LoginResponse;
+import com.baofeng.blog.dto.IdRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -49,6 +50,16 @@ public class UserController {
             return ApiResponse.success(response);
         } else {
             return ApiResponse.error(401, "登录失败");
+        }
+    }
+    @PostMapping("/getUserInfoById")
+    public ApiResponse<User> getUserInfoById(@RequestBody IdRequest idRequest){
+        int id = idRequest.getId();
+        User user = userService.getUserInfoById(id);
+        if (user != null){
+            return ApiResponse.success(user);
+        }else {
+            return ApiResponse.error(401, "用户不存在");
         }
     }
 

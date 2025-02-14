@@ -73,4 +73,8 @@ public class UserServiceImpl implements UserService {
         // 此处直接复用 UserMapper 中 selectByUsernameOrEmail 方法
         return userMapper.selectByUsernameOrEmail(username);
     }
+    @Override
+    public User getUserInfoById(int id){
+        return userMapper.selectById(id);
+    }
 } 

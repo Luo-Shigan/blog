@@ -8,4 +8,5 @@ public interface UserService {
     User registerUser(UserAuthDTO.RegisterRequest registerDTO);
     User loginUser(UserAuthDTO.LoginRequest loginDTO);
     User getUserByUsername(String username);
+    User getUserInfoById(int id);
 } 

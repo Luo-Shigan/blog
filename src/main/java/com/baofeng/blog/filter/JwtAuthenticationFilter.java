@@ -31,8 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 从请求头中提取 token，要求带上 "Bearer " 前缀
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            System.out.println("携带Bearer");
-            System.out.println("Received Authorization Header: " + authHeader);
+            // System.out.println("携带Bearer");
+            // System.out.println("Received Authorization Header: " + authHeader);
             String token = authHeader.substring(7); // 去除 "Bearer " 前缀获取真正的 token
             // 验证 token 是否有效（包括签名和过期时间）
             if (jwtTokenProvider.validateToken(token)) {
