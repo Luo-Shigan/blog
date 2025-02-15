@@ -3,7 +3,7 @@ package com.baofeng.blog.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 /**
  * LoginResponse 直接将 token 定义为 String
  */
@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginResponse {
     private String token;
-    private User user;
+    @JsonUnwrapped
+    private User result;
 
     @Data
     @NoArgsConstructor
