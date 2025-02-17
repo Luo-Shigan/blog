@@ -96,7 +96,7 @@ public class UserController {
                 ApiResponse.success("角色更新成功") : 
                 ApiResponse.error(400, "角色更新失败");
     }
-    @GetMapping("/list")
+    @PostMapping("/getUserslist")
     public ApiResponse<UserPageDTO.Response> getUserList(UserPageDTO.Request request) {
         return ApiResponse.success(userService.getUserList(request));
     }
