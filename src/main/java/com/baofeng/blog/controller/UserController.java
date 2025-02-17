@@ -7,6 +7,7 @@ import com.baofeng.blog.util.JwtTokenProvider;
 import com.baofeng.blog.entity.User;
 import com.baofeng.blog.dto.LoginResponse;
 import com.baofeng.blog.dto.IdRequest;
+import com.baofeng.blog.dto.UserPageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -90,17 +91,14 @@ public class UserController {
     public ApiResponse<String> updateUserRole(
             @PathVariable int id, 
             @PathVariable String role) {
-        User user = userService.getUserInfoById(id);
-        if (user.getRole().name() == "ADMIN") {
             boolean success = userService.updateUserRole(id, role);
             return success ? 
                 ApiResponse.success("角色更新成功") : 
                 ApiResponse.error(400, "角色更新失败");
-
-        }else {
-            return ApiResponse.error(403, "用户没有权限");
-
-        }
-
     }
+    @GetMapping("/list")
+    public ApiResponse<UserPageDTO.Response> getUserList(UserPageDTO.Request request) {
+        return ApiResponse.success(userService.getUserList(request));
+    }
+
 } 

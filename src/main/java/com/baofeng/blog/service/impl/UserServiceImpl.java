@@ -1,6 +1,7 @@
 package com.baofeng.blog.service.impl;
 
 import com.baofeng.blog.dto.UserAuthDTO;
+import com.baofeng.blog.dto.UserPageDTO;
 import com.baofeng.blog.entity.User;
 import com.baofeng.blog.exception.DuplicateUserException;
 import com.baofeng.blog.exception.AuthException;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -87,5 +90,32 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public UserPageDTO.Response getUserList(UserPageDTO.Request param) {
+        int offset = (param.getCurrent() - 1) * param.getSize();
+        int pageSize = param.getSize();
+        
+        // 先查询 User 列表
+        List<User> userslist = userMapper.selectByPage(offset, pageSize);
+        int total = userslist.size();
+        // 手动转换为 UserVO
+        List<UserPageDTO.UserVO> voList = userslist.stream()
+            .map(user -> {
+                UserPageDTO.UserVO vo = new UserPageDTO.UserVO();
+                vo.setUsername(user.getUsername());
+                vo.setNickName(user.getNickName());
+                vo.setAvatarUrl(user.getAvatarUrl());
+                vo.setCreatedAt(user.getCreatedAt());
+                vo.setUpdatedAt(user.getUpdatedAt());
+                return vo;
+            })
+            .collect(Collectors.toList());
+        
+        UserPageDTO.Response result = new UserPageDTO.Response();
+        result.setList(voList);
+        result.setTotal(total);
+        return result;
     }
 } 
