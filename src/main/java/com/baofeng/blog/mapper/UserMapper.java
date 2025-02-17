@@ -20,7 +20,7 @@ public interface UserMapper {
                           @Param("pageSize") int pageSize);
     
     User selectByUsernameOrEmail(String account);
-    int updateLoginInfo(Long id);
-    int incrementLoginAttempts(Long id);
+    int updateLoginInfo(int id);
+    int incrementLoginAttempts(int id);
     int updateUserSelective(User user);
 } 

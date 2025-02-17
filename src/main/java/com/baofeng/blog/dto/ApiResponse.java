@@ -1,8 +1,8 @@
 package com.baofeng.blog.dto;
 
-public record ApiResponse<T>(int code, String message, T data) {
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(200, "success", data);
+public record ApiResponse<T>(int code, String message, T result) {
+    public static <T> ApiResponse<T> success(T result) {
+        return new ApiResponse<>(200, "success", result);
     }
     
     public static <T> ApiResponse<T> error(int code, String message) {

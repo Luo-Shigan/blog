@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class User {
-    private Long id;
+    private int id;
     
     // 用户名（唯一约束）
     private String username;
@@ -19,6 +19,8 @@ public class User {
     private String avatarUrl;
     
     private String bio;
+    // 昵称,数据库字段nick_name
+    private String nickName;
     
     // 枚举类型需要实现自定义类型处理器 或 使用@EnumValue注解（MyBatis Plus）
     private Role role;

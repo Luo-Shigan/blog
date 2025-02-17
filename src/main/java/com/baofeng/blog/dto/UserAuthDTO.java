@@ -14,7 +14,7 @@ public class UserAuthDTO {
     // 注册请求
     public record RegisterRequest(
         @NotBlank(message = "用户名不能为空")
-        @Size(min = 4, max = 20, message = "用户名长度4-20个字符")
+        @Size(min = 5, max = 16, message = "用户名长度4-20个字符")
         String username,
 
         @NotBlank(message = "邮箱不能为空")
@@ -22,8 +22,8 @@ public class UserAuthDTO {
         String email,
 
         @NotBlank(message = "密码不能为空")
-        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
-                 message = "密码必须至少8位，包含字母和数字")
+        @Pattern(regexp = "^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,18}$",
+                 message = "密码格式应为6-18位数字、字母、符号的任意两种组合")
         String password
     ) {}
 } 

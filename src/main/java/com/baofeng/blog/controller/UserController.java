@@ -43,7 +43,8 @@ public class UserController {
             // 构造 Token 和 User 信息（内部类）
             LoginResponse.User userInfo = new LoginResponse.User(
                     user.getId(),
-                    user.getUsername()
+                    user.getUsername(),
+                    user.getRole().name()
             );
             // 封装并返回
             LoginResponse response = new LoginResponse(tokenValue, userInfo);
@@ -64,6 +65,7 @@ public class UserController {
     }
 
 
+
     /**
      * 此接口要求请求携带有效的 JWT Token，JwtAuthenticationFilter 已经在请求处理前解析并设置好了认证信息
      * 当请求成功认证后，就可以通过 SecurityContextHolder 获取当前用户的用户名，再通过业务层查询数据库返回数据。
@@ -82,5 +84,23 @@ public class UserController {
             return ApiResponse.error(404, "未找到用户信息");
         }
         return ApiResponse.success(user);
+    }
+
+    @PutMapping("/updateRole/{id}/{role}")
+    public ApiResponse<String> updateUserRole(
+            @PathVariable int id, 
+            @PathVariable String role) {
+        User user = userService.getUserInfoById(id);
+        if (user.getRole().name() == "ADMIN") {
+            boolean success = userService.updateUserRole(id, role);
+            return success ? 
+                ApiResponse.success("角色更新成功") : 
+                ApiResponse.error(400, "角色更新失败");
+
+        }else {
+            return ApiResponse.error(403, "用户没有权限");
+
+        }
+
     }
 } 

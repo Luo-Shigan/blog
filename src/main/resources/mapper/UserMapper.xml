@@ -21,17 +21,18 @@
         <result property="loginAttempts" column="login_attempts"/>
         <result property="emailVerified" column="is_email_verified"/>
         <result property="active" column="is_active"/>
+        <result property="nickName" column="nick_name"/>
     </resultMap>
 
     <!-- 基础CRUD操作 -->
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users (
             username, email, password, avatar_url, bio, role, status,
-            last_login, login_attempts, is_email_verified, is_active
+            last_login, login_attempts, is_email_verified, is_active,nick_name
         ) VALUES (
             #{username}, #{email}, #{password}, #{avatarUrl}, #{bio}, 
             #{role}, #{status}, #{lastLogin}, #{loginAttempts}, 
-            #{emailVerified}, #{active}
+            #{emailVerified}, #{active}, #{nickName}
         )
     </insert>
 
@@ -48,6 +49,7 @@
             login_attempts = #{loginAttempts},
             is_email_verified = #{emailVerified},
             is_active = #{active}
+            nick_name = #{nickName}
         WHERE id = #{id}
     </update>
 
@@ -118,6 +120,7 @@
             <if test="loginAttempts != null">login_attempts = #{loginAttempts},</if>
             <if test="emailVerified != null">is_email_verified = #{emailVerified},</if>
             <if test="active != null">is_active = #{active},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
             updated_at = NOW()
         </set>
         WHERE id = #{id}

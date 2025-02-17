@@ -9,4 +9,5 @@ public interface UserService {
     User loginUser(UserAuthDTO.LoginRequest loginDTO);
     User getUserByUsername(String username);
     User getUserInfoById(int id);
+    boolean updateUserRole(int id, String role);
 } 
