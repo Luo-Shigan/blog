@@ -96,9 +96,26 @@ public class UserController {
                 ApiResponse.success("角色更新成功") : 
                 ApiResponse.error(400, "角色更新失败");
     }
-    @PostMapping("/getUserslist")
-    public ApiResponse<UserPageDTO.Response> getUserList(UserPageDTO.Request request) {
+    @PostMapping("/getUsersList")
+    public ApiResponse<UserPageDTO.Response> getUserList(@RequestBody UserPageDTO.Request request) {
+        System.out.println("你好");
         return ApiResponse.success(userService.getUserList(request));
+    }
+    @PostMapping("/getUserInfoByToken")
+    public ApiResponse<User> getUserInfoByToken(@RequestHeader("Authorization") String BearerToken) {
+        String token = BearerToken.substring(7); // 去除 "Bearer " 前缀获取真正的 token
+        // 验证 token 并获取用户名
+        String username = jwtTokenProvider.getUserNameFromToken(token);
+
+        if (username == null) {
+            return ApiResponse.error(401, "无效的 token");
+        }
+        // 根据用户名查询数据库返回用户信息
+        User user = userService.getUserByUsername(username);
+        if (user == null) {
+            return ApiResponse.error(404, "未找到用户信息");
+        }
+        return ApiResponse.success(user);
     }
 
 } 

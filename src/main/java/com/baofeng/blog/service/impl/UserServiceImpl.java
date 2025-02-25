@@ -96,7 +96,6 @@ public class UserServiceImpl implements UserService {
     public UserPageDTO.Response getUserList(UserPageDTO.Request param) {
         int offset = (param.getCurrent() - 1) * param.getSize();
         int pageSize = param.getSize();
-        
         // 先查询 User 列表
         List<User> userslist = userMapper.selectByPage(offset, pageSize);
         int total = userslist.size();
