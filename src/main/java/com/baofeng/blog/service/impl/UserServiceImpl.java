@@ -117,4 +117,10 @@ public class UserServiceImpl implements UserService {
         result.setTotal(total);
         return result;
     }
+    @Override
+    public boolean updatePassword(String username,String newPassword){
+
+        int result = userMapper.updatePassword(username, passwordEncoder.encode(newPassword));
+        return result > 0;
+    }
 } 

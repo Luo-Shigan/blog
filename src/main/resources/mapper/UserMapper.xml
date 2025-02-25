@@ -104,6 +104,11 @@
             login_attempts = login_attempts + 1
         WHERE id = #{id}
     </update>
+    <update id="updatePassword">
+        UPDATE users
+            SET password = #{password} 
+        WHERE username = #{username}
+    </update>
 
     <!-- 动态更新 -->
     <update id="updateUserSelective">

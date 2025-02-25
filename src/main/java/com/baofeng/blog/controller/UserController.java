@@ -6,7 +6,6 @@ import com.baofeng.blog.service.UserService;
 import com.baofeng.blog.util.JwtTokenProvider;
 import com.baofeng.blog.entity.User;
 import com.baofeng.blog.dto.LoginResponse;
-import com.baofeng.blog.dto.IdRequest;
 import com.baofeng.blog.dto.UserPageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api/users")
@@ -55,8 +55,8 @@ public class UserController {
         }
     }
     @PostMapping("/getUserInfoById")
-    public ApiResponse<User> getUserInfoById(@RequestBody IdRequest idRequest){
-        int id = idRequest.getId();
+    public ApiResponse<User> getUserInfoById(@RequestBody JsonNode idRequest){
+        int id = idRequest.get("id").asInt(); 
         User user = userService.getUserInfoById(id);
         if (user != null){
             return ApiResponse.success(user);
@@ -116,6 +116,18 @@ public class UserController {
             return ApiResponse.error(404, "未找到用户信息");
         }
         return ApiResponse.success(user);
+    }
+    @PostMapping("/passwordUpdate")
+    public ApiResponse<String> updatePassword(@RequestBody JsonNode requestBody){
+        String username = requestBody.get("username").asText(); // 从请求体中提取用户名
+        String newPassword = requestBody.get("newPassword").asText(); // 提取新密码
+    
+        // 这里可以添加更新密码的逻辑
+        boolean success = userService.updatePassword(username, newPassword);
+        return success ? 
+            ApiResponse.success("密码更新成功") : 
+            ApiResponse.error(401, "密码更新失败");
+
     }
 
 } 

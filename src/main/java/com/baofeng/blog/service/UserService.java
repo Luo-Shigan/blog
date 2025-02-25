@@ -12,4 +12,5 @@ public interface UserService {
     User getUserInfoById(int id);
     boolean updateUserRole(int id, String role);
     UserPageDTO.Response getUserList(UserPageDTO.Request param);
+    boolean updatePassword(String username,String newPassword);
 } 
