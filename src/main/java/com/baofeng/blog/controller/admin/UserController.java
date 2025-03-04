@@ -1,12 +1,13 @@
-package com.baofeng.blog.controller;
+package com.baofeng.blog.controller.admin;
 
-import com.baofeng.blog.dto.ApiResponse;
-import com.baofeng.blog.dto.UserAuthDTO;
-import com.baofeng.blog.service.UserService;
+import com.baofeng.blog.entity.admin.User;
+import com.baofeng.blog.service.admin.UserService;
 import com.baofeng.blog.util.JwtTokenProvider;
-import com.baofeng.blog.entity.User;
-import com.baofeng.blog.dto.LoginResponse;
-import com.baofeng.blog.dto.UserPageDTO;
+import com.baofeng.blog.vo.ApiResponse;
+import com.baofeng.blog.vo.admin.LoginResponseVO;
+import com.baofeng.blog.vo.admin.UserAuthVO;
+import com.baofeng.blog.vo.admin.UserPageVO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -30,25 +31,25 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<User> registerUser(@RequestBody @Valid UserAuthDTO.RegisterRequest registerDTO) {
+    public ApiResponse<User> registerUser(@RequestBody @Valid UserAuthVO.RegisterRequest registerDTO) {
         //在Serivce写清楚了用户名重复如何处理的逻辑
         return ApiResponse.success(userService.registerUser(registerDTO));
     }
 
     @PostMapping("/login")
-    public ApiResponse<LoginResponse> login(@RequestBody @Valid UserAuthDTO.LoginRequest loginDTO) {
+    public ApiResponse<LoginResponseVO> login(@RequestBody @Valid UserAuthVO.LoginRequest loginDTO) {
         User user = userService.loginUser(loginDTO);
         if (user != null) {
             // 生成 token
             String tokenValue = jwtTokenProvider.generateToken(user);
             // 构造 Token 和 User 信息（内部类）
-            LoginResponse.User userInfo = new LoginResponse.User(
+            LoginResponseVO.User userInfo = new LoginResponseVO.User(
                     user.getId(),
                     user.getUsername(),
                     user.getRole().name()
             );
             // 封装并返回
-            LoginResponse response = new LoginResponse(tokenValue, userInfo);
+            LoginResponseVO response = new LoginResponseVO(tokenValue, userInfo);
             return ApiResponse.success(response);
         } else {
             return ApiResponse.error(401, "登录失败");
@@ -56,7 +57,7 @@ public class UserController {
     }
     @PostMapping("/getUserInfoById")
     public ApiResponse<User> getUserInfoById(@RequestBody JsonNode idRequest){
-        int id = idRequest.get("id").asInt(); 
+        Long id = idRequest.get("id").asLong(); 
         User user = userService.getUserInfoById(id);
         if (user != null){
             return ApiResponse.success(user);
@@ -89,7 +90,7 @@ public class UserController {
 
     @PutMapping("/updateRole/{id}/{role}")
     public ApiResponse<String> updateUserRole(
-            @PathVariable int id, 
+            @PathVariable Long id, 
             @PathVariable String role) {
             boolean success = userService.updateUserRole(id, role);
             return success ? 
@@ -97,7 +98,7 @@ public class UserController {
                 ApiResponse.error(400, "角色更新失败");
     }
     @PostMapping("/getUsersList")
-    public ApiResponse<UserPageDTO.Response> getUserList(@RequestBody UserPageDTO.Request request) {
+    public ApiResponse<UserPageVO.Response> getUserList(@RequestBody UserPageVO.Request request) {
         System.out.println("你好");
         return ApiResponse.success(userService.getUserList(request));
     }

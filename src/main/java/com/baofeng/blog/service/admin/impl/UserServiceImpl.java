@@ -1,12 +1,13 @@
-package com.baofeng.blog.service.impl;
+package com.baofeng.blog.service.admin.impl;
 
-import com.baofeng.blog.dto.UserAuthDTO;
-import com.baofeng.blog.dto.UserPageDTO;
-import com.baofeng.blog.entity.User;
 import com.baofeng.blog.exception.DuplicateUserException;
+import com.baofeng.blog.mapper.admin.UserMapper;
+import com.baofeng.blog.service.admin.UserService;
+import com.baofeng.blog.entity.admin.User;
 import com.baofeng.blog.exception.AuthException;
-import com.baofeng.blog.mapper.UserMapper;
-import com.baofeng.blog.service.UserService;
+import com.baofeng.blog.vo.admin.UserAuthVO;
+import com.baofeng.blog.vo.admin.UserPageVO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User registerUser(UserAuthDTO.RegisterRequest registerDTO) {
+    public User registerUser(UserAuthVO.RegisterRequest registerDTO) {
         // 检查用户名和邮箱唯一性
         checkUserUniqueness(registerDTO.username(), registerDTO.email());
         
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
         }
     }
     @Override
-    public User loginUser(UserAuthDTO.LoginRequest loginDTO) {
+    public User loginUser(UserAuthVO.LoginRequest loginDTO) {
         User user = userMapper.selectByUsernameOrEmail(loginDTO.username());
         if (user == null) {
             throw new AuthException(400,"用户不存在");
@@ -77,12 +78,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectByUsernameOrEmail(username);
     }
     @Override
-    public User getUserInfoById(int id){
+    public User getUserInfoById(Long id){
         return userMapper.selectById(id);
     }
 
     @Override
-    public boolean updateUserRole(int id, String role) {
+    public boolean updateUserRole(Long id, String role) {
         User user = userMapper.selectById(id);
         if (user != null) {
             user.setRole(User.Role.valueOf(role.toUpperCase()));
@@ -93,16 +94,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserPageDTO.Response getUserList(UserPageDTO.Request param) {
+    public UserPageVO.Response getUserList(UserPageVO.Request param) {
         int offset = (param.getCurrent() - 1) * param.getSize();
         int pageSize = param.getSize();
         // 先查询 User 列表
         List<User> userslist = userMapper.selectByPage(offset, pageSize);
         int total = userslist.size();
         // 手动转换为 UserVO
-        List<UserPageDTO.UserVO> voList = userslist.stream()
+        List<UserPageVO.UserVO> voList = userslist.stream()
             .map(user -> {
-                UserPageDTO.UserVO vo = new UserPageDTO.UserVO();
+                UserPageVO.UserVO vo = new UserPageVO.UserVO();
                 vo.setUsername(user.getUsername());
                 vo.setNickName(user.getNickName());
                 vo.setAvatarUrl(user.getAvatarUrl());
@@ -112,7 +113,7 @@ public class UserServiceImpl implements UserService {
             })
             .collect(Collectors.toList());
         
-        UserPageDTO.Response result = new UserPageDTO.Response();
+        UserPageVO.Response result = new UserPageVO.Response();
         result.setList(voList);
         result.setTotal(total);
         return result;

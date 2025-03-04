@@ -1,6 +1,6 @@
-package com.baofeng.blog.dto;
+package com.baofeng.blog.vo.admin;
 import jakarta.validation.constraints.*;
-public class UserAuthDTO {
+public class UserAuthVO {
 
     // 登录请求
     public record LoginRequest(

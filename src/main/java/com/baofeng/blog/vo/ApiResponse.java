@@ -1,4 +1,4 @@
-package com.baofeng.blog.dto;
+package com.baofeng.blog.vo;
 
 public record ApiResponse<T>(int code, String message, T result) {
     public static <T> ApiResponse<T> success(T result) {

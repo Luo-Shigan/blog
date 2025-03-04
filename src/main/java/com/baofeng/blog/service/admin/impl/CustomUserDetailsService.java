@@ -1,7 +1,8 @@
-package com.baofeng.blog.service.impl;
+package com.baofeng.blog.service.admin.impl;
 
-import com.baofeng.blog.entity.User;
-import com.baofeng.blog.mapper.UserMapper;
+import com.baofeng.blog.entity.admin.User;
+import com.baofeng.blog.mapper.admin.UserMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package com.baofeng.blog.dto;
+package com.baofeng.blog.vo.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class LoginResponseVO {
     private String token;
     @JsonUnwrapped
     private User result;
@@ -19,7 +19,7 @@ public class LoginResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class User {
-        private int id;
+        private Long id;
         private String username;
         private String role;
     }

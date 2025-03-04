@@ -1,8 +1,10 @@
 package com.baofeng.blog.util;
 
-import com.baofeng.blog.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.baofeng.blog.entity.admin.User;
+
 import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import io.jsonwebtoken.security.Keys;

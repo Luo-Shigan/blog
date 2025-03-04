@@ -1,6 +1,6 @@
 package com.baofeng.blog.filter;
 
-import com.baofeng.blog.service.impl.CustomUserDetailsService;
+import com.baofeng.blog.service.admin.impl.CustomUserDetailsService;
 import com.baofeng.blog.util.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

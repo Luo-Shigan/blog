@@ -1,10 +1,10 @@
-package com.baofeng.blog.dto;
+package com.baofeng.blog.vo.admin;
 
 import lombok.Data;
 import java.util.List;
 import java.time.LocalDateTime;
 
-public class UserPageDTO {
+public class UserPageVO {
     
     @Data
     public static class Request {

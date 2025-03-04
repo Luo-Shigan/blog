@@ -1,11 +1,11 @@
-package com.baofeng.blog.entity;
+package com.baofeng.blog.entity.admin;
 
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
 public class User {
-    private int id;
+    private Long id;
     
     // 用户名（唯一约束）
     private String username;

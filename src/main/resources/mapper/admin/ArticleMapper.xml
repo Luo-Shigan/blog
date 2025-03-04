@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.baofeng.blog.mapper.admin.ArticleMapper">
+
+    <resultMap id="ArticleResultMap" type="com.baofeng.blog.entity.admin.Article">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="slug" column="slug"/>
+        <result property="content" column="content"/>
+        <result property="summary" column="summary"/>
+        <result property="coverImage" column="cover_image"/>
+        <result property="authorId" column="author_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="status" column="status"/>
+        <result property="views" column="views"/>
+        <result property="likes" column="likes"/>
+        <result property="commentsCount" column="comments_count"/>
+        <result property="isFeatured" column="is_featured"/>
+        <result property="publishedAt" column="published_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="getArticleById" resultMap="ArticleResultMap">
+        SELECT * FROM articles WHERE id = #{id}
+    </select>
+
+
+    <insert id="insertArticle" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO articles(title, slug, content, summary, cover_image, author_id, category_id, status, views, likes, comments_count, is_featured, published_at, created_at, updated_at)
+        VALUES(#{title}, #{slug}, #{content}, #{summary}, #{coverImage}, #{authorId}, #{categoryId}, #{status}, #{views}, #{likes}, #{commentsCount}, #{isFeatured}, #{publishedAt}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="updateArticle">
+        UPDATE articles
+        SET title=#{title}, slug=#{slug}, content=#{content}, summary=#{summary}, cover_image=#{coverImage}, author_id=#{authorId}, category_id=#{categoryId}, status=#{status}, views=#{views}, likes=#{likes}, comments_count=#{commentsCount}, is_featured=#{isFeatured}, published_at=#{publishedAt}, created_at=#{createdAt}, updated_at=#{updatedAt}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteArticle">
+        DELETE FROM articles WHERE id = #{id}
+    </delete>
+
+</mapper>

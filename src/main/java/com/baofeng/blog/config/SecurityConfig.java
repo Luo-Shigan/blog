@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.baofeng.blog.filter.JwtAuthenticationFilter;
-import com.baofeng.blog.service.impl.CustomUserDetailsService;
+import com.baofeng.blog.service.admin.impl.CustomUserDetailsService;
 import com.baofeng.blog.util.JwtTokenProvider;
 // import com.baofeng.blog.exception.CustomAccessDeniedHandler;
 // import com.baofeng.blog.exception.CustomAuthenticationEntryPoint;
