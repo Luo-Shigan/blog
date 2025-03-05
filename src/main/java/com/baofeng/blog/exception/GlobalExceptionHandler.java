@@ -24,5 +24,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleValidationException(AuthException ex){
         return ResponseEntity.badRequest().body(ApiResponse.error(ex.getStatusCode(), ex.getMessage()));
     }
+    
 
 } 

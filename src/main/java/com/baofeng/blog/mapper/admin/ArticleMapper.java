@@ -8,4 +8,5 @@ public interface ArticleMapper {
     int insertArticle(Article article);
     int updateArticle(Article article);
     int deleteArticle(Long id);
+    int updateArticleSelective(Article article);
 }

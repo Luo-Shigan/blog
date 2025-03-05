@@ -39,7 +39,28 @@
         SET title=#{title}, slug=#{slug}, content=#{content}, summary=#{summary}, cover_image=#{coverImage}, author_id=#{authorId}, category_id=#{categoryId}, status=#{status}, views=#{views}, likes=#{likes}, comments_count=#{commentsCount}, is_featured=#{isFeatured}, published_at=#{publishedAt}, created_at=#{createdAt}, updated_at=#{updatedAt}
         WHERE id=#{id}
     </update>
-
+    <update id="updateArticleSelective">
+          UPDATE articles
+    <set>
+        <if test="title != null">title=#{title},</if>
+        <if test="slug != null">slug=#{slug},</if>
+        <if test="content != null">content=#{content},</if>
+        <if test="summary != null">summary=#{summary},</if>
+        <if test="coverImage != null">cover_image=#{coverImage},</if>
+        <if test="authorId != null">author_id=#{authorId},</if>
+        <if test="categoryId != null">category_id=#{categoryId},</if>
+        <if test="status != null">status=#{status},</if>
+        <if test="views != null">views=#{views},</if>
+        <if test="likes != null">likes=#{likes},</if>
+        <if test="commentsCount != null">comments_count=#{commentsCount},</if>
+        <if test="isFeatured != null">is_featured=#{isFeatured},</if>
+        <if test="publishedAt != null">published_at=#{publishedAt},</if>
+        <if test="createdAt != null">created_at=#{createdAt},</if>
+        <if test="updatedAt != null">updated_at=#{updatedAt},</if>
+        updated_at = NOW()
+    </set>
+    WHERE id=#{id}
+    </update>
     <delete id="deleteArticle">
         DELETE FROM articles WHERE id = #{id}
     </delete>

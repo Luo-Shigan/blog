@@ -23,7 +23,3 @@ mysql:8.0.33
 | `is_email_verified` | `BOOLEAN`   | 默认值为 `FALSE`，表示用户是否已验证邮箱 |
 | `is_active`     | `BOOLEAN`       | 默认值为 `TRUE`，表示账户是否启用（禁用账户时为 `FALSE`） |
 
-参考资料:
-1.AI:deepseek
-2.ChatGPT
-3.https://juejin.cn/post/7025787630222573599#heading-4
