@@ -19,5 +19,6 @@ public interface ArticleMapper {
     int updateArticle(Article article);
     int deleteArticle(Long id);
     int updateArticleSelective(Article article);
+    Long getAuthorIdById(Long articleId);
 
 }

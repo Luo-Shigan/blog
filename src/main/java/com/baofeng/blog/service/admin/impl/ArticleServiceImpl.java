@@ -12,6 +12,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,6 +30,9 @@ public class ArticleServiceImpl implements ArticleService {
         article.setAuthorId(articleRequest.authorId());
         article.setSlug(articleRequest.slug());
         article.setAuthorId(articleRequest.authorId());
+        article.setStatus("DRAFT");
+        LocalDateTime now = LocalDateTime.now();
+        article.setCreatedAt(now);
         int rowsInserted = articleMapper.insertArticle(article);
 
         if(rowsInserted > 0){
@@ -86,10 +90,8 @@ public class ArticleServiceImpl implements ArticleService {
         
         // 开启分页
         PageHelper.startPage(pageNum, pageSize);
-        System.out.println("--------1-------------------");
         // 执行查询
         List<ArticleVO> list = articleMapper.getArticlePage(request);
-        System.out.println("--------2-------------------");
         // 获取分页信息
         PageInfo<ArticleVO> pageInfo = new PageInfo<>(list);
         
@@ -99,5 +101,18 @@ public class ArticleServiceImpl implements ArticleService {
         response.setPages(pageInfo.getPages());    // 总页数
         response.setList(pageInfo.getList());      // 当前页数据
         return response;
+    }
+    @Override
+    public boolean publishArticle(Long articleId,Long authorId) {
+        Long articleAuthorId = articleMapper.getAuthorIdById(articleId);
+        if ( articleAuthorId == authorId ) {
+            Article article = new Article();
+            article.setId(articleId);
+            article.setStatus("PUBLISHED");
+            article.setPublishedAt(LocalDateTime.now());
+            return updateArticleSelective(article);
+        } else {
+            return false;
+        }
     }
 }

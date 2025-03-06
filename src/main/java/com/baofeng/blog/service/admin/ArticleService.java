@@ -12,4 +12,5 @@ public interface ArticleService {
     boolean updateArticleSelective(Article article);
     boolean updatePinStaus(Long id,boolean isPinned);
     ArticlePageResponseVO getArticlePage(ArticlePageRequestVO request);
+    boolean publishArticle(Long articleId,Long authorId);
 }

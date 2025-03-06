@@ -7,7 +7,9 @@ import com.baofeng.blog.entity.admin.Article;
 import com.baofeng.blog.service.admin.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.apache.catalina.core.AprLifecycleListener;
 import org.springframework.validation.annotation.Validated;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api/admin/articles")
@@ -16,14 +18,25 @@ import org.springframework.validation.annotation.Validated;
 public class ArticleController {
 
     private final ArticleService articleService;
-
-    @PostMapping("/publish")
+    //创建文章草稿
+    @PostMapping("/create")
     public ApiResponse<String> createArticle(@RequestBody ArticleCRUDVO.CreateArticleRequest articleRequest) {
         boolean flag = articleService.createArticle(articleRequest);
         if (flag) {
             return ApiResponse.success(null);
         }else{
             return ApiResponse.error(400, "创建失败");
+        }
+    }
+    @PostMapping("/publish")
+    public ApiResponse<String> publishArticle(@RequestBody JsonNode requestBody) {
+        Long articleId = requestBody.get("articleId").asLong(); // 从请求体中提取用户名
+        Long authorId = requestBody.get("authorId").asLong(); // 提取新密码
+        boolean success = articleService.publishArticle(articleId,authorId);
+        if ( success ){
+            return ApiResponse.success(null);
+        } else {
+            return ApiResponse.error(400, "发表失败");
         }
     }
 

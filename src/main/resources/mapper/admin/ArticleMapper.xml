@@ -27,7 +27,9 @@
     <select id="getArticleById" resultMap="ArticleResultMap">
         SELECT * FROM articles WHERE id = #{id}
     </select>
-
+    <select id="getAuthorIdById" resultType="java.lang.Long">
+        SELECT author_id FROM articles WHERE id = #{id}
+    </select>
 
     <insert id="insertArticle" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO articles(title, slug, content, summary, cover_image, author_id, category_id, status, views, likes, comments_count, is_featured, published_at, created_at, updated_at)
@@ -64,6 +66,7 @@
     <delete id="deleteArticle">
         DELETE FROM articles WHERE id = #{id}
     </delete>
+
     
     <!-- 文章分页查询的结果映射 -->
     <resultMap id="ArticlePageResultMap" type="com.baofeng.blog.vo.admin.ArticlePageVO$ArticleVO">
