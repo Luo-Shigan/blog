@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/admin/users")
 public class UserController {
     
     private final UserService userService;

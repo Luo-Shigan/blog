@@ -19,6 +19,7 @@ public class User {
     private String avatarUrl;
     
     private String bio;
+    
     // 昵称,数据库字段nick_name
     private String nickName;
     

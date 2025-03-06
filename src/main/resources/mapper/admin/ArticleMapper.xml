@@ -64,5 +64,63 @@
     <delete id="deleteArticle">
         DELETE FROM articles WHERE id = #{id}
     </delete>
+    
+    <!-- 文章分页查询的结果映射 -->
+    <resultMap id="ArticlePageResultMap" type="com.baofeng.blog.vo.admin.ArticlePageVO$ArticleVO">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="viewCount" column="views"/>
+        <result property="commentCount" column="comments_count"/>
+        <result property="likeCount" column="likes"/>
+        <result property="createTime" column="created_at"/>
+        <result property="updateTime" column="updated_at"/>
+        <result property="status" column="status"/>
+        <result property="coverImage" column="cover_image"/>
+        <!-- 作者信息映射 -->
+        <association property="author" javaType="com.baofeng.blog.vo.admin.ArticlePageVO$AuthorVO">
+            <id property="authorId" column="author_id"/>
+            <result property="authorNickname" column="author_nickname"/>
+            <result property="authorAvatar" column="author_avatar"/>
+        </association>
+    </resultMap>
+
+    <!-- 分页查询文章列表 -->
+    <select id="getArticlePage" resultMap="ArticlePageResultMap">
+        SELECT 
+            a.id, a.title, a.summary, a.views, a.comments_count, 
+            a.likes, a.created_at, a.updated_at, a.status, 
+            a.cover_image, a.author_id,
+            u.nick_name as author_nickname, u.avatar_url as author_avatar,
+            c.name as category_name
+        FROM articles a
+        LEFT JOIN users u ON a.author_id = u.id
+        LEFT JOIN categories c ON a.category_id = c.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (a.title LIKE CONCAT('%', #{keyword}, '%') 
+                OR a.summary LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="categoryId != null">
+                AND a.category_id = #{categoryId}
+            </if>
+        </where>
+        <if test="sortBy != null and sortOrder != null">
+            ORDER BY 
+            <choose>
+                <when test="sortBy == 'createTime'">a.created_at</when>
+                <when test="sortBy == 'updateTime'">a.updated_at</when>
+                <when test="sortBy == 'viewCount'">a.views</when>
+                <when test="sortBy == 'likeCount'">a.likes</when>
+                <when test="sortBy == 'commentCount'">a.comments_count</when>
+                <otherwise>a.created_at</otherwise>
+            </choose>
+            <choose>
+                <when test="sortOrder.toLowerCase() == 'desc'">DESC</when>
+                <otherwise>ASC</otherwise>
+            </choose>
+        </if>
+    </select>
 
 </mapper>
