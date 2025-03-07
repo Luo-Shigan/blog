@@ -1,4 +1,4 @@
-package com.baofeng.blog.service.admin.impl;
+package com.baofeng.blog.service;
 
 import com.baofeng.blog.entity.admin.User;
 import com.baofeng.blog.mapper.admin.UserMapper;

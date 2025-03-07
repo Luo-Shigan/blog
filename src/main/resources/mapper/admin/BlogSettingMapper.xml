@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.baofeng.blog.mapper.admin.BlogSettingMapper">
+    <!-- 基础结果映射 -->
+    <resultMap id="BaseResultMap" type="com.baofeng.blog.entity.admin.BlogSetting">
+        <id property="id" column="id"/>
+        <result property="settingKey" column="setting_key"/>
+        <result property="settingValue" column="setting_value"/>
+    </resultMap>
+
+    <!-- 获取所有设置 -->
+    <select id="getAllSettings" resultMap="BaseResultMap">
+        SELECT * FROM blog_settings
+    </select>
+
+    <!-- 根据键获取设置 -->
+    <select id="getSettingByKey" resultMap="BaseResultMap">
+        SELECT * FROM blog_settings WHERE setting_key = #{key}
+    </select>
+
+    <!-- 更新设置 -->
+    <update id="updateSetting">
+        UPDATE blog_settings 
+        SET setting_value = #{settingValue}
+        WHERE setting_key = #{settingKey}
+    </update>
+
+    <!-- 创建设置 -->
+    <insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO blog_settings (setting_key, setting_value)
+        VALUES (#{settingKey}, #{settingValue})
+    </insert>
+</mapper> 

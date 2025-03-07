@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.baofeng.blog.filter.JwtAuthenticationFilter;
-import com.baofeng.blog.service.admin.impl.CustomUserDetailsService;
+import com.baofeng.blog.service.CustomUserDetailsService;
 import com.baofeng.blog.util.JwtTokenProvider;
 // import com.baofeng.blog.exception.CustomAccessDeniedHandler;
 // import com.baofeng.blog.exception.CustomAuthenticationEntryPoint;
@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register","/api/users/login").permitAll()
+                .requestMatchers("/api/admin/users/register","/api/admin/users/login").permitAll()
                 .anyRequest().authenticated() // 需要身份验证的请求
             )
             .csrf(csrf -> csrf.disable())
