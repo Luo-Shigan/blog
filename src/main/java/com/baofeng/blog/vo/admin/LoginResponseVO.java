@@ -12,8 +12,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 @AllArgsConstructor
 public class LoginResponseVO {
     private String token;
-    @JsonUnwrapped
-    private User result;
+    private User user;
 
     @Data
     @NoArgsConstructor

@@ -14,22 +14,37 @@ public interface BlogSettingMapper {
 
     /**
      * 根据键获取设置
-     * @param key 设置键
+     * @param id 网站id
      * @return 设置信息
      */
-    BlogSetting getSettingByKey(String key);
+    BlogSetting getSettingById(long id);
 
     /**
-     * 更新设置
+     * 删除网站设置信息
+     * @param id 网站id
+     * @return 设置信息
+     */
+    int deleteSettingById(long id);
+    
+    /**
+     * 选择性更新设置
      * @param setting 设置信息
      * @return 影响的行数
      */
-    int updateSetting(BlogSetting setting);
-
+    int updateSettingById(BlogSetting setting);
     /**
-     * 创建设置
+     * 增加网站访问次数
      * @param setting 设置信息
      * @return 影响的行数
      */
-    int createSetting(BlogSetting setting);
+    int incrementVisitCount(long id);
+
+    /**
+     * 初始化网站信息
+     * @param setting 设置信息
+     * @return 影响的行数
+     */
+    int insertSetting(BlogSetting setting);
+
+
 }

@@ -38,6 +38,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ApiResponse<LoginResponseVO> login(@RequestBody @Valid UserAuthVO.LoginRequest loginDTO) {
+        System.out.println("---------1-----------");
         User user = userService.loginUser(loginDTO);
         if (user != null) {
             // 生成 token
@@ -102,7 +103,7 @@ public class UserController {
         System.out.println("你好");
         return ApiResponse.success(userService.getUserList(request));
     }
-    @PostMapping("/getUserInfoByToken")
+    @GetMapping("/verifyToken")
     public ApiResponse<User> getUserInfoByToken(@RequestHeader("Authorization") String BearerToken) {
         String token = BearerToken.substring(7); // 去除 "Bearer " 前缀获取真正的 token
         // 验证 token 并获取用户名

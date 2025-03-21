@@ -30,11 +30,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User registerUser(UserAuthVO.RegisterRequest registerDTO) {
         // 检查用户名和邮箱唯一性
-        checkUserUniqueness(registerDTO.username(), registerDTO.email());
+        checkUserUniqueness(registerDTO.username());
         
         User newUser = new User();
         newUser.setUsername(registerDTO.username());
-        newUser.setEmail(registerDTO.email());
         newUser.setPassword(passwordEncoder.encode(registerDTO.password()));
         newUser.setRole(User.Role.USER);
         newUser.setStatus(User.Status.ACTIVE);
@@ -43,12 +42,9 @@ public class UserServiceImpl implements UserService {
         return newUser;
     }
 
-    private void checkUserUniqueness(String username, String email) {
+    private void checkUserUniqueness(String username) {
         if (userMapper.selectByUsernameOrEmail(username) != null) {
             throw new DuplicateUserException("用户名已存在");
-        }
-        if (userMapper.selectByUsernameOrEmail(email) != null) {
-            throw new DuplicateUserException("邮箱已被注册");
         }
     }
     @Override

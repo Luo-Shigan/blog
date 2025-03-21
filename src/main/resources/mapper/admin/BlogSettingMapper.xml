@@ -7,8 +7,14 @@
     <!-- 基础结果映射 -->
     <resultMap id="BaseResultMap" type="com.baofeng.blog.entity.admin.BlogSetting">
         <id property="id" column="id"/>
-        <result property="settingKey" column="setting_key"/>
-        <result property="settingValue" column="setting_value"/>
+        <result property="siteTitle" column="site_title"/>
+        <result property="siteDescription" column="site_description"/>
+        <result property="siteLogo" column="site_logo"/>
+        <result property="theme" column="theme"/>
+        <result property="enableComments" column="enable_comments"/>
+        <result property="visitCount" column="visit_count"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
     </resultMap>
 
     <!-- 获取所有设置 -->
@@ -16,21 +22,41 @@
         SELECT * FROM blog_settings
     </select>
 
-    <!-- 根据键获取设置 -->
-    <select id="getSettingByKey" resultMap="BaseResultMap">
-        SELECT * FROM blog_settings WHERE setting_key = #{key}
-    </select>
+    <insert id="insertSetting" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO blog_settings (site_title, site_description, site_logo, theme, enable_comments, visit_count, created_at, updated_at)
+        VALUES (#{siteTitle}, #{siteDescription}, #{siteLogo}, #{theme}, #{enableComments}, #{visitCount}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    </insert>
 
-    <!-- 更新设置 -->
-    <update id="updateSetting">
-        UPDATE blog_settings 
-        SET setting_value = #{settingValue}
-        WHERE setting_key = #{settingKey}
+
+    <!-- 根据 ID 查询博客设置 -->
+    <select id="getSettingById" resultMap="BaseResultMap">
+        SELECT * FROM blog_settings WHERE id = #{id}
+    </select>
+    
+    <!-- 根据 ID 更新所有设置 -->
+    <update id="updateSettingById">
+        UPDATE blog_settings
+        <set>
+            <if test="siteTitle != null">site_title = #{siteTitle},</if>
+            <if test="siteDescription != null">site_description = #{siteDescription},</if>
+            <if test="siteLogo != null">site_logo = #{siteLogo},</if>
+            <if test="theme != null">theme = #{theme},</if>
+            <if test="enableComments != null">enable_comments = #{enableComments},</if>
+            <if test="visitCount != null">visit_count = #{visitCount},</if>
+            updated_at = CURRENT_TIMESTAMP
+        </set>
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteSettingById" >
+        DELETE FROM blog_settings WHERE id = #{id}
+    </delete>
+
+    <!-- 增加网站访问次数 -->
+    <update id="incrementVisitCount">
+        UPDATE blog_settings
+        SET visit_count = visit_count + 1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
     </update>
 
-    <!-- 创建设置 -->
-    <insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO blog_settings (setting_key, setting_value)
-        VALUES (#{settingKey}, #{settingValue})
-    </insert>
 </mapper> 
