@@ -20,7 +20,7 @@ public class JwtTokenProvider {
     // @Value注解从application.yml中获取
     @Value("${jwt.secret}")
     private String secret;
-
+    // 默认token有效时间
     @Value("${jwt.expiration}")
     private long expiration;
     /**
@@ -54,7 +54,7 @@ public class JwtTokenProvider {
         return expiredDate.before(new Date());
     }
 
-    public String generateToken(User user) {
+    public String generateToken(User user, long expiration) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 

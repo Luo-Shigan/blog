@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -38,23 +40,45 @@ public class UserController {
 
     @PostMapping("/login")
     public ApiResponse<LoginResponseVO> login(@RequestBody @Valid UserAuthVO.LoginRequest loginDTO) {
-        System.out.println("---------1-----------");
         User user = userService.loginUser(loginDTO);
         if (user != null) {
             // 生成 token
-            String tokenValue = jwtTokenProvider.generateToken(user);
+            //  accessTokenExpiration: 3600000    # 1 小时（60 分钟 = 60 * 60 * 1000 ms）
+            //   refreshTokenExpiration: 1209600000  # 14 天（14 * 24 * 60 * 60 * 1000 ms
+            String accessToken = jwtTokenProvider.generateToken(user,3600000);
+            String refreshToken = jwtTokenProvider.generateToken(user, 1209600000);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime expires = now.plus(1, ChronoUnit.HOURS);
             // 构造 Token 和 User 信息（内部类）
             LoginResponseVO.User userInfo = new LoginResponseVO.User(
-                    user.getId(),
+                    user.getAvatarUrl(),
                     user.getUsername(),
+                    user.getNickName(),
                     user.getRole().name()
             );
             // 封装并返回
-            LoginResponseVO response = new LoginResponseVO(tokenValue, userInfo);
+            LoginResponseVO response = new LoginResponseVO(accessToken,refreshToken,expires,userInfo);
             return ApiResponse.success(response);
         } else {
             return ApiResponse.error(401, "登录失败");
         }
+    }
+    @PostMapping("/refreshToken")
+    public ApiResponse<String> accessToeknGenerate(@RequestBody String refreshToken){
+        try {
+            boolean success = jwtTokenProvider.validateToken(refreshToken);
+            if ( success ){
+                String username = jwtTokenProvider.getUserNameFromToken(refreshToken);
+                User user = userService.getUserByUsername(username);
+                String accessToken = jwtTokenProvider.generateToken(user, 3600000);
+                return ApiResponse.success(accessToken);
+            } else {
+                return ApiResponse.error(400, "refreshToken验证失败");
+            }
+        } catch( Exception e){
+            return ApiResponse.error(400, "refreshToken验证失败"+ e.getMessage());
+        }
+
     }
     @PostMapping("/getUserInfoById")
     public ApiResponse<User> getUserInfoById(@RequestBody JsonNode idRequest){
