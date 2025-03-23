@@ -39,27 +39,34 @@ public class JwtTokenProvider {
         return username;
     }
    /**
-     * 校验token
+     * 校验token, 检验token解析出来的用户是否存在于数据库中
      */
     public boolean validateToken(String token, UserDetails userDetails) {
         String username = getUserNameFromToken(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return username.equals(userDetails.getUsername());
     }
 
     /**
      * 判断token是否已经失效
      */
-    private boolean isTokenExpired(String token) {
-        Date expiredDate = parseToken(token).getExpiration();
-        return expiredDate.before(new Date());
+    public boolean isTokenExpired(String token) {
+        Claims claims = parseToken(token);
+        if ( claims != null) {
+            Date expiredDate = claims.getExpiration();
+            return expiredDate.after(new Date());
+        } else {
+            return false;
+        }
+
     }
 
-    public String generateToken(User user, long expiration) {
+    public String generateToken(User user, long expiration, boolean isRefreshToken) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getId()))
+                .claim("type", isRefreshToken ? "refresh" : "access")
                 .claim("username", user.getUsername())
                 .claim("role", user.getRole())
                 .setIssuedAt(now)
@@ -80,16 +87,6 @@ public class JwtTokenProvider {
             log.info("JWT格式验证失败:{}",token);
         }
         return claims;
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            parseToken(token);
-            return true;
-        } catch (Exception ex) {
-            // 记录异常信息
-            return false;
-        }
     }
 
 } 

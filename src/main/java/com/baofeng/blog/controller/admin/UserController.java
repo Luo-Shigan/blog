@@ -45,8 +45,8 @@ public class UserController {
             // 生成 token
             //  accessTokenExpiration: 3600000    # 1 小时（60 分钟 = 60 * 60 * 1000 ms）
             //   refreshTokenExpiration: 1209600000  # 14 天（14 * 24 * 60 * 60 * 1000 ms
-            String accessToken = jwtTokenProvider.generateToken(user,3600000);
-            String refreshToken = jwtTokenProvider.generateToken(user, 1209600000);
+            String accessToken = jwtTokenProvider.generateToken(user,3600000,false);
+            String refreshToken = jwtTokenProvider.generateToken(user, 1209600000,true);
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime expires = now.plus(1, ChronoUnit.HOURS);
             // 构造 Token 和 User 信息（内部类）
@@ -66,11 +66,11 @@ public class UserController {
     @PostMapping("/refreshToken")
     public ApiResponse<String> accessToeknGenerate(@RequestBody String refreshToken){
         try {
-            boolean success = jwtTokenProvider.validateToken(refreshToken);
+            boolean success = jwtTokenProvider.isTokenExpired(refreshToken);
             if ( success ){
                 String username = jwtTokenProvider.getUserNameFromToken(refreshToken);
                 User user = userService.getUserByUsername(username);
-                String accessToken = jwtTokenProvider.generateToken(user, 3600000);
+                String accessToken = jwtTokenProvider.generateToken(user, 3600000,false);
                 return ApiResponse.success(accessToken);
             } else {
                 return ApiResponse.error(400, "refreshToken验证失败");
@@ -127,7 +127,7 @@ public class UserController {
         System.out.println("你好");
         return ApiResponse.success(userService.getUserList(request));
     }
-    @GetMapping("/verifyToken")
+    @GetMapping("/getUserInfoByToken")
     public ApiResponse<User> getUserInfoByToken(@RequestHeader("Authorization") String BearerToken) {
         String token = BearerToken.substring(7); // 去除 "Bearer " 前缀获取真正的 token
         // 验证 token 并获取用户名

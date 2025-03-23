@@ -2,6 +2,9 @@ package com.baofeng.blog.filter;
 
 import com.baofeng.blog.service.CustomUserDetailsService;
 import com.baofeng.blog.util.JwtTokenProvider;
+import com.baofeng.blog.vo.ApiResponse;
+import com.baofeng.blog.vo.ResponseUtil;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
+import io.jsonwebtoken.Claims;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -35,20 +39,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // System.out.println("Received Authorization Header: " + authHeader);
             String token = authHeader.substring(7); // 去除 "Bearer " 前缀获取真正的 token
             // 验证 token 是否有效（包括签名和过期时间）
-            if (jwtTokenProvider.validateToken(token)) {
-                // 从 token 中解析出用户标识（例如用户名或用户ID）
-                String username = jwtTokenProvider.getUserNameFromToken(token);
-                if (username != null) {
-                    // 根据用户名加载用户详细信息
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    // 可选：进一步验证 token 与 userDetails 是否匹配
-                    if (userDetails != null && jwtTokenProvider.validateToken(token, userDetails)) {
-                        // 构建认证对象，并存入 SecurityContext 中
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (jwtTokenProvider.isTokenExpired(token)) {
+                //解析token
+                Claims claims = jwtTokenProvider.parseToken(token);
+                
+                // 只允许 Access Token 访问受保护资源
+                String tokenType = claims.get("type", String.class);
+                if ("access".equals(tokenType)) {
+                    String username = claims.get("username",String.class);
+                    
+                    if (username != null) {
+                        // 根据用户名加载用户详细信息
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        // 可选：进一步验证 token 与 userDetails 是否匹配
+                        if (userDetails != null && jwtTokenProvider.validateToken(token, userDetails)) {
+                            // 构建认证对象，并存入 SecurityContext 中
+                            UsernamePasswordAuthenticationToken authentication =
+                                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                        } else {
+                            ResponseUtil.sendErrorResponse(response, 400, "Access  Token解析的用户不存在");
+                        }
                     }
+                } else {
+                    ResponseUtil.sendErrorResponse(response, 403, "Refresh Token 不能访问受保护资源");
+                    return;
                 }
+            } else {
+                ResponseUtil.sendErrorResponse(response, 400, "Token 失效");
+                return;
+
             }
         }
         // 继续执行后续过滤器
