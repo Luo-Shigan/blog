@@ -5,8 +5,7 @@ import com.baofeng.blog.service.admin.UserService;
 import com.baofeng.blog.util.JwtTokenProvider;
 import com.baofeng.blog.vo.ApiResponse;
 import com.baofeng.blog.vo.admin.LoginResponseVO;
-import com.baofeng.blog.vo.admin.UserAuthVO;
-import com.baofeng.blog.vo.admin.UserPageVO;
+import com.baofeng.blog.vo.admin.UserAuthVO.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,13 +32,13 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<User> registerUser(@RequestBody @Valid UserAuthVO.RegisterRequest registerDTO) {
+    public ApiResponse<User> registerUser(@RequestBody @Valid RegisterRequest registerDTO) {
         //在Serivce写清楚了用户名重复如何处理的逻辑
         return ApiResponse.success(userService.registerUser(registerDTO));
     }
 
     @PostMapping("/login")
-    public ApiResponse<LoginResponseVO> login(@RequestBody @Valid UserAuthVO.LoginRequest loginDTO) {
+    public ApiResponse<LoginResponseVO> login(@RequestBody @Valid LoginRequest loginDTO) {
         User user = userService.loginUser(loginDTO);
         if (user != null) {
             // 生成 token
@@ -63,15 +62,20 @@ public class UserController {
             return ApiResponse.error(401, "登录失败");
         }
     }
+    //刷新token
     @PostMapping("/refreshToken")
-    public ApiResponse<String> accessToeknGenerate(@RequestBody String refreshToken){
+    public ApiResponse<refreshTokenResponse> accessToeknGenerate(@RequestBody String refreshToken){
         try {
             boolean success = jwtTokenProvider.isTokenExpired(refreshToken);
             if ( success ){
                 String username = jwtTokenProvider.getUserNameFromToken(refreshToken);
                 User user = userService.getUserByUsername(username);
                 String accessToken = jwtTokenProvider.generateToken(user, 3600000,false);
-                return ApiResponse.success(accessToken);
+                refreshTokenResponse response = new refreshTokenResponse();
+                response.setAccessToken(accessToken);
+                response.setRefreshToken(refreshToken);
+                response.setExpires(LocalDateTime.now().plus(1, ChronoUnit.HOURS));
+                return ApiResponse.success(response);
             } else {
                 return ApiResponse.error(400, "refreshToken验证失败");
             }
@@ -123,7 +127,7 @@ public class UserController {
                 ApiResponse.error(400, "角色更新失败");
     }
     @PostMapping("/getUsersList")
-    public ApiResponse<UserPageVO.Response> getUserList(@RequestBody UserPageVO.Request request) {
+    public ApiResponse<userPageResponse> getUserList(@RequestBody userPageRequest request) {
         System.out.println("你好");
         return ApiResponse.success(userService.getUserList(request));
     }

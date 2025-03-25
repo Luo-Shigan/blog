@@ -1,5 +1,8 @@
 package com.baofeng.blog.vo.admin;
 import jakarta.validation.constraints.*;
+import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
 public class UserAuthVO {
 
     // 登录请求
@@ -22,4 +25,41 @@ public class UserAuthVO {
                  message = "密码格式应为6-18位数字、字母、符号的任意两种组合")
         String password
     ) {}
+    @Data
+    public static class  refreshTokenResponse {
+        private String accessToken;
+        private String refreshToken;
+        private LocalDateTime expires;
+        
+    }
+    @Data
+    public static class userPageRequest {
+        private Integer current = 1;    // 当前页码
+        private Integer size = 10;      // 每页大小
+    }
+    
+    @Data
+    public static class userPageResponse {
+        private List<userPageVO> list;      // 数据列表
+        private int total;             // 总记录数
+    }
+    
+    @Data
+    public static class userPageVO {
+        private String username;
+        private String nickName;
+        private String avatarUrl;
+        private Role role;
+        public enum Role {
+            USER, ADMIN
+        }
+            // 数据库字段 created_at
+        private LocalDateTime createdAt;
+        
+        // 数据库字段 updated_at
+        private LocalDateTime updatedAt;
+        // ... 其他需要返回的用户字段
+    }
+
+
 } 

@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/admin/users/register","/api/admin/users/login").permitAll()
+                .requestMatchers("/api/admin/users/register","/api/admin/users/login","/api/admin/users/refreshToken").permitAll()
                 .anyRequest().authenticated() // 需要身份验证的请求
             )
             .csrf(csrf -> csrf.disable())

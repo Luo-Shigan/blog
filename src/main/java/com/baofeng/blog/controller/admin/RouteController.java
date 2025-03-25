@@ -28,6 +28,7 @@ public class RouteController {
         parentMeta.setTitle("用户管理");
         parentMeta.setIcon("ep:user");
         parentMeta.setRank(10);
+        parentMeta.setShowlink(true);
         parentRoute.setMeta(parentMeta);
         
         // 构造子路由
