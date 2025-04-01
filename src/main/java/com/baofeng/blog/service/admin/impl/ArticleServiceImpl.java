@@ -1,10 +1,7 @@
 package com.baofeng.blog.service.admin.impl;
 
 import com.baofeng.blog.service.admin.ArticleService;
-import com.baofeng.blog.vo.admin.ArticleCRUDVO;
-import com.baofeng.blog.vo.admin.ArticlePageVO.ArticlePageRequestVO;
-import com.baofeng.blog.vo.admin.ArticlePageVO.ArticlePageResponseVO;
-import com.baofeng.blog.vo.admin.ArticlePageVO.ArticleVO;
+import com.baofeng.blog.vo.admin.ArticleCRUDVO.*;
 import com.baofeng.blog.entity.admin.Article;
 import com.baofeng.blog.mapper.admin.ArticleMapper;
 import com.github.pagehelper.PageHelper;
@@ -22,7 +19,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
 
     @Override
-    public boolean createArticle(ArticleCRUDVO.CreateArticleRequest articleRequest) {
+    public boolean createArticle(CreateArticleRequest articleRequest) {
         Article article = new Article();
         article.setTitle(articleRequest.title());
         article.setContent(articleRequest.content());
@@ -30,7 +27,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setAuthorId(articleRequest.authorId());
         article.setSlug(articleRequest.slug());
         article.setAuthorId(articleRequest.authorId());
-        article.setStatus("DRAFT");
+        article.setStatus(Article.ArticleStatus.DRAFT);
         LocalDateTime now = LocalDateTime.now();
         article.setCreatedAt(now);
         int rowsInserted = articleMapper.insertArticle(article);
@@ -108,11 +105,16 @@ public class ArticleServiceImpl implements ArticleService {
         if ( articleAuthorId == authorId ) {
             Article article = new Article();
             article.setId(articleId);
-            article.setStatus("PUBLISHED");
+            article.setStatus(Article.ArticleStatus.PUBLISHED);
             article.setPublishedAt(LocalDateTime.now());
             return updateArticleSelective(article);
         } else {
             return false;
         }
+    }
+    @Override
+    public boolean isTitleExist(String title){
+        boolean isDuplicated = articleMapper.isTitleExist(title);
+        return isDuplicated;
     }
 }

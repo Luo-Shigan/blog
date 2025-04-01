@@ -1,8 +1,6 @@
 package com.baofeng.blog.controller.admin;
 import com.baofeng.blog.vo.ApiResponse;
-import com.baofeng.blog.vo.admin.ArticleCRUDVO;
-import com.baofeng.blog.vo.admin.ArticlePageVO.ArticlePageRequestVO;
-import com.baofeng.blog.vo.admin.ArticlePageVO.ArticlePageResponseVO;
+import com.baofeng.blog.vo.admin.ArticleCRUDVO.*;
 import com.baofeng.blog.entity.admin.Article;
 import com.baofeng.blog.service.admin.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +15,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class ArticleController {
 
     private final ArticleService articleService;
-    //创建文章草稿
+    /**
+     * 发表文章
+     * @param articleRequest 文章
+     * @return 分页结果
+     */
     @PostMapping("/create")
-    public ApiResponse<String> createArticle(@RequestBody ArticleCRUDVO.CreateArticleRequest articleRequest) {
+    public ApiResponse<String> createArticle(@RequestBody CreateArticleRequest articleRequest) {
         boolean flag = articleService.createArticle(articleRequest);
         if (flag) {
             return ApiResponse.success(null);
@@ -27,6 +29,11 @@ public class ArticleController {
             return ApiResponse.error(400, "创建失败");
         }
     }
+    /**
+     * 发表文章
+     * @param requestBody 文章id和作者id
+     * @return 分页结果
+     */
     @PostMapping("/publish")
     public ApiResponse<String> publishArticle(@RequestBody JsonNode requestBody) {
         Long articleId = requestBody.get("articleId").asLong(); // 从请求体中提取用户名
@@ -38,7 +45,11 @@ public class ArticleController {
             return ApiResponse.error(400, "发表失败");
         }
     }
-
+    /**
+     * 根据id删除文章
+     * @param id 文章id
+     * @return 分页结果
+     */
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteArticle(@PathVariable Long id){
         boolean success = articleService.deleteArticle(id);
@@ -48,7 +59,11 @@ public class ArticleController {
             return ApiResponse.error(404, "文章未找到");
         }
     }
-
+    /**
+     * 根据id获取文章
+     * @param id 文章id
+     * @return 分页结果
+     */
     @GetMapping("/{id}")
     public ApiResponse<Article> getArticleById(@PathVariable Long id){
         Article article = articleService.getArticleById(id);
@@ -58,7 +73,11 @@ public class ArticleController {
             return ApiResponse.error(404, "文章不存在");
         }
     }
-
+    /**
+     * 更新文章
+     * @param article 文章
+     * @return 分页结果
+     */
     @PostMapping("/update")
     public ApiResponse<String> updateArticleSelective(@RequestBody Article article){
         if ( article.getId() == null){
@@ -73,6 +92,12 @@ public class ArticleController {
         }
     }
 
+    /**
+     * 文章是否置顶
+     * @param id 文章id
+     * @param isPinned 文章是否置顶
+     * @return 分页结果
+     */
     @PutMapping("/{id}/pin")
     public ApiResponse<String> updataPinStaus(@PathVariable Long id,@RequestParam boolean isPinned){
         boolean success = articleService.updatePinStaus(id,isPinned);
@@ -126,6 +151,26 @@ public class ArticleController {
      */
     private boolean isValidSortOrder(String sortOrder) {
         return sortOrder == null || sortOrder.equalsIgnoreCase("asc") || sortOrder.equalsIgnoreCase("desc");
+    }
+    /**
+     * 判断文章标题是否重复
+     * @param title 文章标题
+     * @return 分页结果
+     */
+    @PostMapping("/titleExist")
+    public ApiResponse<String> titleExist(@RequestBody String title) {
+        try {
+            boolean isDuplicated = articleService.isTitleExist(title);
+            if ( !isDuplicated ) {
+                return ApiResponse.success("标题不存在");
+            } else {
+                return ApiResponse.error(400, "标题已存在");
+            }
+        } catch (Exception e){
+            return ApiResponse.error(400, "错误："+ e.getMessage());
+
+        }
+
     }
 }
 

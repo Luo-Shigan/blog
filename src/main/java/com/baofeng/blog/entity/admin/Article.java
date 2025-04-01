@@ -13,7 +13,7 @@ public class Article {
     private String coverImage;
     private Long authorId;
     private Long categoryId;
-    private String status;
+    private ArticleStatus status;
     private Integer views;
     private Integer likes;
     private Integer commentsCount;
@@ -21,6 +21,9 @@ public class Article {
     private LocalDateTime publishedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    public enum ArticleStatus {
+        DRAFT, PUBLISHED, DELETED;
+    }
 
 }
 

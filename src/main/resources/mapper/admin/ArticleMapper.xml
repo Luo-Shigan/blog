@@ -14,7 +14,8 @@
         <result property="coverImage" column="cover_image"/>
         <result property="authorId" column="author_id"/>
         <result property="categoryId" column="category_id"/>
-        <result property="status" column="status"/>
+        <result property="status" column="status"
+            typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
         <result property="views" column="views"/>
         <result property="likes" column="likes"/>
         <result property="commentsCount" column="comments_count"/>
@@ -67,9 +68,15 @@
         DELETE FROM articles WHERE id = #{id}
     </delete>
 
-    
+    <!--文章标题是否重复-->
+    <select id="isTitleExist" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM articles WHERE title = #{title}
+        )
+    </select>
+
     <!-- 文章分页查询的结果映射 -->
-    <resultMap id="ArticlePageResultMap" type="com.baofeng.blog.vo.admin.ArticlePageVO$ArticleVO">
+    <resultMap id="ArticlePageResultMap" type="com.baofeng.blog.vo.admin.ArticleCRUDVO$ArticleVO">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="summary" column="summary"/>
@@ -79,10 +86,11 @@
         <result property="likeCount" column="likes"/>
         <result property="createTime" column="created_at"/>
         <result property="updateTime" column="updated_at"/>
-        <result property="status" column="status"/>
+        <result property="status" column="status"
+            typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
         <result property="coverImage" column="cover_image"/>
         <!-- 作者信息映射 -->
-        <association property="author" javaType="com.baofeng.blog.vo.admin.ArticlePageVO$AuthorVO">
+        <association property="author" javaType="com.baofeng.blog.vo.admin.ArticleCRUDVO$AuthorVO">
             <id property="authorId" column="author_id"/>
             <result property="authorNickname" column="author_nickname"/>
             <result property="authorAvatar" column="author_avatar"/>

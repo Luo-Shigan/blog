@@ -1,7 +1,6 @@
 package com.baofeng.blog.mapper.admin;
 import com.baofeng.blog.entity.admin.Article;
-import com.baofeng.blog.vo.admin.ArticlePageVO.ArticlePageRequestVO;
-import com.baofeng.blog.vo.admin.ArticlePageVO.ArticleVO;
+import com.baofeng.blog.vo.admin.ArticleCRUDVO.*;
 import org.apache.ibatis.annotations.Mapper;
 // import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -20,5 +19,6 @@ public interface ArticleMapper {
     int deleteArticle(Long id);
     int updateArticleSelective(Article article);
     Long getAuthorIdById(Long articleId);
+    boolean isTitleExist(String title);
 
 }
