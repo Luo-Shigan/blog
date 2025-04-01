@@ -1,6 +1,7 @@
 package com.baofeng.blog.mapper.admin;
 
 import com.baofeng.blog.vo.admin.TagPageVO.TagVO;
+import com.baofeng.blog.vo.admin.TagPageVO.TagDictionaryResponse;
 import com.baofeng.blog.vo.admin.TagPageVO.TagPageRequestVO;
 import com.baofeng.blog.entity.admin.Tag;
 import org.apache.ibatis.annotations.Mapper;
@@ -49,4 +50,9 @@ public interface TagMapper {
      * @return 文章数量
      */
     int getArticleCount(Long id);
+    /**
+     * 获取所有标签id和name
+     * @return 所有标签id和name
+     */
+    List<TagDictionaryResponse> getAllTags();
 }

@@ -1,6 +1,7 @@
 package com.baofeng.blog.controller.admin;
 
 import com.baofeng.blog.vo.ApiResponse;
+import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryDictionaryResponse;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryPageRequestVO;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryPageResponseVO;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CreateCategoryRequest;
@@ -8,7 +9,7 @@ import com.baofeng.blog.service.admin.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
-
+import java.util.List;
 @RestController
 @RequestMapping("/api/admin/categories")
 @RequiredArgsConstructor
@@ -89,6 +90,19 @@ public class CategoryController {
             return ApiResponse.error(400, e.getMessage());
         } catch (Exception e) {
             return ApiResponse.error(500, "删除失败：" + e.getMessage());
+        }
+    }
+    /**
+     * 返回目录字典
+     */
+    @GetMapping("/getCategoryDictionary")
+    public ApiResponse<List<CategoryDictionaryResponse>> getCategoryDictionary(){
+        try{
+            List<CategoryDictionaryResponse> categoryDictionaryResponse = categoryService.getCategoryDictionary();
+            return ApiResponse.success(categoryDictionaryResponse);
+
+        } catch (Exception e){
+            return ApiResponse.error(400, "获取失败"+e.getMessage());
         }
     }
 }

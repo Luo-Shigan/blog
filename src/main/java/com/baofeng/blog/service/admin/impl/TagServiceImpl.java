@@ -5,6 +5,7 @@ import com.baofeng.blog.vo.admin.TagPageVO.TagPageRequestVO;
 import com.baofeng.blog.vo.admin.TagPageVO.TagPageResponseVO;
 import com.baofeng.blog.vo.admin.TagPageVO.TagVO;
 import com.baofeng.blog.vo.admin.TagPageVO.CreateTagRequest;
+import com.baofeng.blog.vo.admin.TagPageVO.TagDictionaryResponse;
 import com.baofeng.blog.entity.admin.Tag;
 import com.baofeng.blog.mapper.admin.TagMapper;
 import com.github.pagehelper.PageHelper;
@@ -73,5 +74,10 @@ public class TagServiceImpl implements TagService {
 
         // 删除标签
         return tagMapper.deleteTag(id) > 0;
+    }
+    @Override
+    public List<TagDictionaryResponse> getTagDictionary(){
+        List<TagDictionaryResponse> tagDictionaryResponse = tagMapper.getAllTags();
+        return tagDictionaryResponse;
     }
 } 

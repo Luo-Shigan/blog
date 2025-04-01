@@ -5,7 +5,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class CategoryPageVO {
-    
+    /**
+     * 创建响应目录字典
+     */
+    @Data
+    public static class CategoryDictionaryResponse{
+        long id;
+        String name;
+    }
     /**
      * 创建分类请求参数
      */

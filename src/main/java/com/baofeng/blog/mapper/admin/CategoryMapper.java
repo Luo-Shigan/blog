@@ -1,6 +1,7 @@
 package com.baofeng.blog.mapper.admin;
 
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryVO;
+import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryDictionaryResponse;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryPageRequestVO;
 import com.baofeng.blog.entity.admin.Category;
 import org.apache.ibatis.annotations.Mapper;
@@ -49,4 +50,8 @@ public interface CategoryMapper {
      * @return 分类信息
      */
     Category getCategoryById(Long id);
+    /**
+     * 获取目录字典
+     */
+    List<CategoryDictionaryResponse> getAllCategories();
 } 

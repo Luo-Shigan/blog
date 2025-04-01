@@ -69,4 +69,13 @@
         GROUP BY c.id, c.name, c.description, c.created_at, c.updated_at
         ORDER BY c.created_at DESC
     </select>
+
+    <resultMap id="TagResultMap" type="com.baofeng.blog.vo.admin.CategoryPageVO$CategoryDictionaryResponse">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getAllCategories" resultMap="TagResultMap">
+        SELECT id, name FROM categories
+    </select>
 </mapper> 

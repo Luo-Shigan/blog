@@ -4,9 +4,13 @@ import com.baofeng.blog.vo.ApiResponse;
 import com.baofeng.blog.vo.admin.TagPageVO.TagPageRequestVO;
 import com.baofeng.blog.vo.admin.TagPageVO.TagPageResponseVO;
 import com.baofeng.blog.vo.admin.TagPageVO.CreateTagRequest;
+import com.baofeng.blog.vo.admin.TagPageVO.TagDictionaryResponse;
 import com.baofeng.blog.service.admin.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
 
 @RestController
@@ -89,6 +93,19 @@ public class TagController {
             return ApiResponse.success(tagService.getTagPage(request));
         } catch (Exception e) {
             return ApiResponse.error(500, "查询失败：" + e.getMessage());
+        }
+    }
+    /**
+     * 查询标签列表
+     * @return {id,name}
+     */
+    @GetMapping("/getTagDictionary")
+    public ApiResponse<List<TagDictionaryResponse>> getTagDictionary(){
+        try {
+            List<TagDictionaryResponse> tagDictionaryResponse = tagService.getTagDictionary();
+            return ApiResponse.success(tagDictionaryResponse);
+        } catch (Exception e) {
+            return ApiResponse.error(400,"获取失败"+e.getMessage());
         }
     }
 } 

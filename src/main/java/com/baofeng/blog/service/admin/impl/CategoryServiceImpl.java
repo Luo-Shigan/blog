@@ -1,6 +1,7 @@
 package com.baofeng.blog.service.admin.impl;
 
 import com.baofeng.blog.service.admin.CategoryService;
+import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryDictionaryResponse;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryPageRequestVO;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryPageResponseVO;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryVO;
@@ -74,5 +75,10 @@ public class CategoryServiceImpl implements CategoryService {
 
         // 删除分类
         return categoryMapper.deleteCategory(id) > 0;
+    }
+    @Override
+    public List<CategoryDictionaryResponse> getCategoryDictionary(){
+        List<CategoryDictionaryResponse> categoryDictionaryList = categoryMapper.getAllCategories();
+        return categoryDictionaryList;
     }
 }

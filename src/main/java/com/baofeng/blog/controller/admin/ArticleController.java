@@ -50,7 +50,7 @@ public class ArticleController {
      * @param id 文章id
      * @return 分页结果
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteArticleById/{id}")
     public ApiResponse<String> deleteArticle(@PathVariable Long id){
         boolean success = articleService.deleteArticle(id);
         if (success) {
@@ -64,7 +64,7 @@ public class ArticleController {
      * @param id 文章id
      * @return 分页结果
      */
-    @GetMapping("/{id}")
+    @GetMapping("/getArticleById/{id}")
     public ApiResponse<Article> getArticleById(@PathVariable Long id){
         Article article = articleService.getArticleById(id);
         if (article !=null ) {
@@ -98,8 +98,8 @@ public class ArticleController {
      * @param isPinned 文章是否置顶
      * @return 分页结果
      */
-    @PutMapping("/{id}/pin")
-    public ApiResponse<String> updataPinStaus(@PathVariable Long id,@RequestParam boolean isPinned){
+    @PutMapping("/isTop/{id}/{isPinned}")
+    public ApiResponse<String> updataPinStaus(@PathVariable Long id,@PathVariable boolean isPinned){
         boolean success = articleService.updatePinStaus(id,isPinned);
         if ( success ) {
             return ApiResponse.success(null);
@@ -113,7 +113,7 @@ public class ArticleController {
      * @param request 分页查询参数
      * @return 分页结果
      */
-    @PostMapping("/list")
+    @PostMapping("/getArticleList")
     public ApiResponse<ArticlePageResponseVO> getArticlePage(@RequestBody ArticlePageRequestVO request) {
         // 参数校验
         if (request == null) {

@@ -65,4 +65,16 @@
         GROUP BY t.id, t.name, t.created_at, t.updated_at
         ORDER BY t.created_at DESC
     </select>
+
+    <resultMap id="TagResultMap" type="com.baofeng.blog.vo.admin.TagPageVO$TagDictionaryResponse">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getAllTags" resultMap="TagResultMap">
+        SELECT id, name FROM tags
+    </select>
+
+
+
 </mapper> 

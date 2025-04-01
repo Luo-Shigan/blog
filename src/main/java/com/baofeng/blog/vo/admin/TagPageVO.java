@@ -5,7 +5,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TagPageVO {
-    
+    /**
+     * 创建响应标签字典
+     */
+    @Data
+    public static class TagDictionaryResponse{
+        long id;
+        String name;
+    }
     /**
      * 创建标签请求参数
      */

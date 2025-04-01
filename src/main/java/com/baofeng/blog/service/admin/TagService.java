@@ -2,7 +2,11 @@ package com.baofeng.blog.service.admin;
 
 import com.baofeng.blog.vo.admin.TagPageVO.TagPageRequestVO;
 import com.baofeng.blog.vo.admin.TagPageVO.TagPageResponseVO;
+
+import java.util.List;
+
 import com.baofeng.blog.vo.admin.TagPageVO.CreateTagRequest;
+import com.baofeng.blog.vo.admin.TagPageVO.TagDictionaryResponse;
 
 public interface TagService {
     /**
@@ -26,4 +30,10 @@ public interface TagService {
      * @throws RuntimeException 当标签不存在或标签下有文章时抛出
      */
     boolean deleteTag(Long id);
+
+    /**
+     * 获取标签字典
+     * @return 标签字典
+     */
+    List<TagDictionaryResponse> getTagDictionary();
 } 
