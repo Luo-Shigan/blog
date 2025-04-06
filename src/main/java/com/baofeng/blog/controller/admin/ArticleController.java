@@ -5,6 +5,7 @@ import com.baofeng.blog.entity.admin.Article;
 import com.baofeng.blog.service.admin.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.annotation.Validated;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -171,6 +172,20 @@ public class ArticleController {
 
         }
 
+    }
+    /**
+     * 图片上传接口
+     * @param file 图片文件
+     * @return 图片URL/路径
+     */
+    @PostMapping("/uploadCover")
+    public ApiResponse<String> uploadCover(@RequestParam("file") MultipartFile file,@RequestParam("id") Long id) {
+        try {
+            String imageUrl = articleService.storeImage(file,id);
+            return ApiResponse.success(imageUrl);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "上传失败：" + e.getMessage());
+        }
     }
 }
 

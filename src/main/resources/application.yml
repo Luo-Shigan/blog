@@ -26,3 +26,6 @@ jwt:
   tokenHead: Bearer  #令牌前缀
   secret: "your-256-bit-secret-key-here-1234567890ABCDEF"
   expiration: 86400000  # 24小时
+app:
+  upload:
+    dir: ./uploads  # 顶层属性

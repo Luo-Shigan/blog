@@ -6,18 +6,30 @@ import com.baofeng.blog.entity.admin.Article;
 import com.baofeng.blog.mapper.admin.ArticleMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.UUID;
 import java.time.LocalDateTime;
 import java.util.List;
+
+
 
 @Service
 // 替代@Autowerid显示注入
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
-
+    @Value("${app.upload.dir}")
+    private String uploadDir;
     @Override
     public boolean createArticle(CreateArticleRequest articleRequest) {
         Article article = new Article();
@@ -116,5 +128,59 @@ public class ArticleServiceImpl implements ArticleService {
     public boolean isTitleExist(String title){
         boolean isDuplicated = articleMapper.isTitleExist(title);
         return isDuplicated;
+    }
+    /**
+     * 存储图片到服务器并返回相对路径
+     * @param imageFile 上传的图片文件
+     * @return 图片的相对路径
+     * @throws IOException 如果存储失败
+     */
+    @Override
+    /**
+     * 存储图片到服务器并返回相对路径
+     * @param imageFile 上传的图片文件
+     * @return 图片的相对路径
+     * @throws IOException 如果存储失败
+     */
+    public String storeImage(MultipartFile imageFile,Long id) throws IOException {
+        // 检查文件是否为空
+        if (imageFile == null || imageFile.isEmpty()) {
+            throw new IllegalArgumentException("Image file cannot be null or empty");
+        }
+
+        // 获取文件名并检查
+        String originalFilename = imageFile.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            throw new IllegalArgumentException("Original filename cannot be null or blank");
+        }
+
+        // 检查文件扩展名
+        int lastDotIndex = originalFilename.lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            throw new IllegalArgumentException("File has no extension");
+        }
+
+        // 确保上传目录存在
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        
+        // 生成唯一文件名
+        String fileExtension = originalFilename.substring(lastDotIndex);
+        String uniqueFilename = UUID.randomUUID() + fileExtension;
+        
+        // 存储文件
+        Path filePath = uploadPath.resolve(uniqueFilename);
+        Files.copy(imageFile.getInputStream(), filePath);
+        Article article = new Article();
+        article.setId(id);
+        article.setCoverImage("/uploads/" + uniqueFilename);
+        int rowsUpdated = articleMapper.updateArticleSelective(article);
+        if (rowsUpdated > 0) {
+            return "/uploads/" + uniqueFilename;
+        } else {
+            throw new IOException("Failed to update article with image path");
+        }
     }
 }

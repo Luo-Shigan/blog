@@ -64,8 +64,9 @@ public class UserController {
     }
     //刷新token
     @PostMapping("/refreshToken")
-    public ApiResponse<refreshTokenResponse> accessToeknGenerate(@RequestBody String refreshToken){
+    public ApiResponse<refreshTokenResponse> accessToeknGenerate(@RequestBody String rawToken){
         try {
+            String refreshToken = rawToken.replaceAll("^\"|\"$", "");
             boolean success = jwtTokenProvider.isTokenExpired(refreshToken);
             if ( success ){
                 String username = jwtTokenProvider.getUserNameFromToken(refreshToken);
