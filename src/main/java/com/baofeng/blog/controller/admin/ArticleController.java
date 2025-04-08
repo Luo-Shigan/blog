@@ -179,9 +179,9 @@ public class ArticleController {
      * @return 图片URL/路径
      */
     @PostMapping("/uploadCover")
-    public ApiResponse<String> uploadCover(@RequestParam("file") MultipartFile file,@RequestParam("id") Long id) {
+    public ApiResponse<String> uploadCover(@RequestParam("file") MultipartFile file,@RequestParam("articleId") Long articleId) {
         try {
-            String imageUrl = articleService.storeImage(file,id);
+            String imageUrl = articleService.storeImage(file,articleId);
             return ApiResponse.success(imageUrl);
         } catch (Exception e) {
             return ApiResponse.error(500, "上传失败：" + e.getMessage());

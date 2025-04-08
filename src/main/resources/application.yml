@@ -28,4 +28,4 @@ jwt:
   expiration: 86400000  # 24小时
 app:
   upload:
-    dir: ./uploads  # 顶层属性
+    dir: /ChIP_seq_2/Data/uploads  # 顶层属性

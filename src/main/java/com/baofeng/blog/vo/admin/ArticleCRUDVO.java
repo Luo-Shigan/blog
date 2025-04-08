@@ -66,5 +66,9 @@ public class ArticleCRUDVO {
         private String authorNickname;
         private String authorAvatar;
     }
+
+    /**
+     * 前端文章请求表单
+     */
     
 }

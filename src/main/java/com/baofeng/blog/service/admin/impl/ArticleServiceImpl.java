@@ -3,11 +3,15 @@ package com.baofeng.blog.service.admin.impl;
 import com.baofeng.blog.service.admin.ArticleService;
 import com.baofeng.blog.vo.admin.ArticleCRUDVO.*;
 import com.baofeng.blog.entity.admin.Article;
+import com.baofeng.blog.entity.admin.Image;
 import com.baofeng.blog.mapper.admin.ArticleMapper;
+import com.baofeng.blog.mapper.admin.ImageMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
+    private final ImageMapper imageMapper;
     @Value("${app.upload.dir}")
     private String uploadDir;
     @Override
@@ -142,7 +147,8 @@ public class ArticleServiceImpl implements ArticleService {
      * @return 图片的相对路径
      * @throws IOException 如果存储失败
      */
-    public String storeImage(MultipartFile imageFile,Long id) throws IOException {
+    public String storeImage(MultipartFile imageFile,Long articleId) throws IOException {
+        System.out.println(articleId);
         // 检查文件是否为空
         if (imageFile == null || imageFile.isEmpty()) {
             throw new IllegalArgumentException("Image file cannot be null or empty");
@@ -173,12 +179,48 @@ public class ArticleServiceImpl implements ArticleService {
         // 存储文件
         Path filePath = uploadPath.resolve(uniqueFilename);
         Files.copy(imageFile.getInputStream(), filePath);
+
+        // 更新articles表
         Article article = new Article();
-        article.setId(id);
+        article.setId(articleId);
         article.setCoverImage("/uploads/" + uniqueFilename);
         int rowsUpdated = articleMapper.updateArticleSelective(article);
-        if (rowsUpdated > 0) {
-            return "/uploads/" + uniqueFilename;
+
+        // 更新article_images表
+        Image image = new Image();
+        long bytes = imageFile.getSize();
+        long kilobytes = bytes / 1024; // 取整（直接除以 1024，自动舍去小数）
+        String contentType = imageFile.getContentType();
+        String username = null;
+        //获取当前认证用户
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            // 获取用户名
+            username = authentication.getName();
+            // 进行相关操作
+            System.out.println("Current user: " + username);
+        } else {
+           
+            System.out.println("No user is authenticated");
+        }
+        image.setArticleId(articleId);
+        image.setFilePath("/uploads/" + uniqueFilename);
+        image.setFileName(uniqueFilename);
+        image.setFileSize(kilobytes);
+        image.setMimeType(contentType);
+        image.setCover(true);
+        image.setCreatedBy(username);
+        Long imageID = imageMapper.getArticleCoverId(articleId);
+        int rowsUpdated1 = 0;
+        // 一篇文章只有一个封面，如果文章封面存在则更新它，反之则插入创建
+        if ( imageID != null) {
+            image.setId(imageID);
+            rowsUpdated1 = imageMapper.updateImageSelective(image);
+        } else {
+            rowsUpdated1 = imageMapper.insertImage(image);
+        }
+        if (rowsUpdated > 0 && rowsUpdated1 > 0) {
+            return "http://10.135.4.3/uploads/" + uniqueFilename;
         } else {
             throw new IOException("Failed to update article with image path");
         }

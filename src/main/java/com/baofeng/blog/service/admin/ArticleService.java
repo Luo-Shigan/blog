@@ -17,5 +17,5 @@ public interface ArticleService {
     ArticlePageResponseVO getArticlePage(ArticlePageRequestVO request);
     boolean publishArticle(Long articleId,Long authorId);
     boolean isTitleExist(String title);
-    String storeImage(MultipartFile imageFile,Long id) throws IOException;
+    String storeImage(MultipartFile imageFile,Long articleId) throws IOException;
 }
