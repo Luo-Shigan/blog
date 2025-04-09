@@ -3,6 +3,7 @@ package com.baofeng.blog.service.admin.impl;
 import com.baofeng.blog.service.admin.ArticleService;
 import com.baofeng.blog.vo.admin.ArticleCRUDVO.*;
 import com.baofeng.blog.entity.admin.Article;
+import com.baofeng.blog.entity.admin.ArticleImage;
 import com.baofeng.blog.entity.admin.Image;
 import com.baofeng.blog.mapper.admin.ArticleMapper;
 import com.baofeng.blog.mapper.admin.ImageMapper;
@@ -179,14 +180,17 @@ public class ArticleServiceImpl implements ArticleService {
         // 存储文件
         Path filePath = uploadPath.resolve(uniqueFilename);
         Files.copy(imageFile.getInputStream(), filePath);
-
+        
+        //前端实际访问图片地址
+        String lastDir = uploadPath.getFileName().toString();
+        String imagePath = "http://10.135.4.3/"+ lastDir + "/" + uniqueFilename;
         // 更新articles表
         Article article = new Article();
         article.setId(articleId);
-        article.setCoverImage("/uploads/" + uniqueFilename);
+        article.setCoverImage(imagePath);
         int rowsUpdated = articleMapper.updateArticleSelective(article);
 
-        // 更新article_images表
+        // 更新images表
         Image image = new Image();
         long bytes = imageFile.getSize();
         long kilobytes = bytes / 1024; // 取整（直接除以 1024，自动舍去小数）
@@ -203,24 +207,21 @@ public class ArticleServiceImpl implements ArticleService {
            
             System.out.println("No user is authenticated");
         }
-        image.setArticleId(articleId);
-        image.setFilePath("/uploads/" + uniqueFilename);
+        image.setFilePath(imagePath);
         image.setFileName(uniqueFilename);
         image.setFileSize(kilobytes);
         image.setMimeType(contentType);
-        image.setCover(true);
         image.setCreatedBy(username);
-        Long imageID = imageMapper.getArticleCoverId(articleId);
-        int rowsUpdated1 = 0;
-        // 一篇文章只有一个封面，如果文章封面存在则更新它，反之则插入创建
-        if ( imageID != null) {
-            image.setId(imageID);
-            rowsUpdated1 = imageMapper.updateImageSelective(image);
-        } else {
-            rowsUpdated1 = imageMapper.insertImage(image);
-        }
-        if (rowsUpdated > 0 && rowsUpdated1 > 0) {
-            return "http://10.135.4.3/uploads/" + uniqueFilename;
+        int rowsUpdated1 = imageMapper.insertImage(image);
+        Long imageId = imageMapper.getImageIdByfilePath(imagePath);
+        
+        //更新articles_images表
+        ArticleImage articleImage = new ArticleImage();
+        articleImage.setArticleId(articleId);
+        articleImage.setImageId(imageId);
+        int rowsUpdated2 = imageMapper.insertArticleImage(articleImage);
+        if (rowsUpdated > 0 && rowsUpdated1 > 0 && rowsUpdated2 > 0) {
+            return imagePath;
         } else {
             throw new IOException("Failed to update article with image path");
         }

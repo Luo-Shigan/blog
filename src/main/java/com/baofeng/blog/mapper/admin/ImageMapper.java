@@ -2,6 +2,7 @@ package com.baofeng.blog.mapper.admin;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.baofeng.blog.entity.admin.ArticleImage;
 import com.baofeng.blog.entity.admin.Image;
 
 @Mapper
@@ -31,10 +32,13 @@ public interface ImageMapper {
      */
     int deleteImage(Long id);
     /**
-     * 查询文章封面id
-     * @param articleId
+     * 根据图片路径（唯一设计）查询图片id
+     * @param filePath
      * @return id
      */
-    Long getArticleCoverId(Long articleId);
-    
+    Long getImageIdByfilePath(String filePath);
+    /**
+     * 创建article_images映射表记录
+     */
+    int insertArticleImage(ArticleImage articleImage);
 }

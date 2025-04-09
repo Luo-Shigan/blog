@@ -28,6 +28,6 @@ public class LoginResponseVO {
         private String avatar;
         private String username;
         private String nickname;
-        private String role;
+        private String roles;
     }
 } 
