@@ -35,7 +35,9 @@
             #{emailVerified}, #{active}, #{nickName}
         )
     </insert>
-
+    <select id="getIdByUsername">
+        select id FROM users WHERE username = #{username}
+    </select>
     <update id="updateUser">
         UPDATE users SET
             username = #{username},

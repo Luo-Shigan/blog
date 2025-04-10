@@ -39,6 +39,8 @@ public interface ImageMapper {
     Long getImageIdByfilePath(String filePath);
     /**
      * 创建article_images映射表记录
+     * @param ArticleImage 
+     * @return 影响行数量
      */
     int insertArticleImage(ArticleImage articleImage);
 }

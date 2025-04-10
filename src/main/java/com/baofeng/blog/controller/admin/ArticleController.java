@@ -22,13 +22,18 @@ public class ArticleController {
      * @return 分页结果
      */
     @PostMapping("/create")
-    public ApiResponse<String> createArticle(@RequestBody CreateArticleRequest articleRequest) {
-        boolean flag = articleService.createArticle(articleRequest);
-        if (flag) {
-            return ApiResponse.success(null);
-        }else{
-            return ApiResponse.error(400, "创建失败");
+    public ApiResponse<Long> createArticle(@RequestBody CreateArticleRequest articleRequest) {
+        try {
+            Long articleId = articleService.createArticle(articleRequest);
+            if ( articleId != null) {
+                return ApiResponse.success(articleId);
+            }else{
+                return ApiResponse.error(400, "创建失败");
+            }
+        } catch (Exception e) {
+            return ApiResponse.error(400, "创建失败: "+e.getMessage());
         }
+
     }
     /**
      * 发表文章
@@ -174,7 +179,7 @@ public class ArticleController {
 
     }
     /**
-     * 图片上传接口
+     * 封面图片上传接口
      * @param file 图片文件
      * @return 图片URL/路径
      */
@@ -185,6 +190,38 @@ public class ArticleController {
             return ApiResponse.success(imageUrl);
         } catch (Exception e) {
             return ApiResponse.error(500, "上传失败：" + e.getMessage());
+        }
+    }
+    /**
+     * 增加分类接口
+     */
+    @PostMapping("/uploadCategory")
+    public ApiResponse<String> uploadCategory(@RequestBody CategoryRequest request){
+        try {
+            boolean success = articleService.addCategory(request);
+            if ( success ) {
+                return ApiResponse.success(null);
+            } else {
+                return ApiResponse.error(400, "文章分类设置失败");
+            }
+        } catch ( Exception e) {
+            return ApiResponse.error(400, "文章分类设置失败："+ e.getMessage());
+        }
+    }
+    /**
+     * 增加标签接口
+     */
+    @PostMapping("/uploadTag")
+    public ApiResponse<String> uploadTag(@RequestBody TagRequest request) {
+        try {
+            boolean success = articleService.addTag(request);
+            if ( success ) {
+                return ApiResponse.success(null);
+            } else {
+                return ApiResponse.error(400, "文章标签设置失败");
+            }
+        } catch ( Exception e ) {
+            return ApiResponse.error(400, "文章标签设置失败" + e.getMessage());
         }
     }
 }

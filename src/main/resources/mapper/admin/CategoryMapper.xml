@@ -22,6 +22,14 @@
         <result property="createTime" column="created_at"/>
         <result property="updateTime" column="updated_at"/>
     </resultMap>
+    <!-- article_categories结果映射-->
+    <resultMap id="articleCategoriesResultMap" type="com.baofeng.blog.entity.admin.ArticleCategory">
+        <id property="id" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
 
     <!-- 创建分类 -->
     <insert id="createCategory" useGeneratedKeys="true" keyProperty="id">
@@ -30,6 +38,12 @@
         ) VALUES (
             #{name}, #{description}, NOW(), NOW()
         )
+    </insert>
+    
+    <!--创建article_categories对应关系-->
+    <insert id="insertCategoryReflect" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article_categories (article_id, category_id, created_at, updated_at)
+        VALUES (#{articleId}, #{categoryId}, NOW(), NOW())
     </insert>
 
     <!-- 根据名称查询分类 -->

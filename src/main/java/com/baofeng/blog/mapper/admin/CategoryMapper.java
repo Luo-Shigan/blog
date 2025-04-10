@@ -3,6 +3,7 @@ package com.baofeng.blog.mapper.admin;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryVO;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryDictionaryResponse;
 import com.baofeng.blog.vo.admin.CategoryPageVO.CategoryPageRequestVO;
+import com.baofeng.blog.entity.admin.ArticleCategory;
 import com.baofeng.blog.entity.admin.Category;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
@@ -54,4 +55,10 @@ public interface CategoryMapper {
      * 获取目录字典
      */
     List<CategoryDictionaryResponse> getAllCategories();
+    /**
+     * 插入article_categories映射表记录
+     * @param ArticleCategory
+     * @return 影响行数量
+     */
+    int insertCategoryReflect(ArticleCategory articleCategory);
 } 

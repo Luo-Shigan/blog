@@ -3,6 +3,7 @@ package com.baofeng.blog.mapper.admin;
 import com.baofeng.blog.vo.admin.TagPageVO.TagVO;
 import com.baofeng.blog.vo.admin.TagPageVO.TagDictionaryResponse;
 import com.baofeng.blog.vo.admin.TagPageVO.TagPageRequestVO;
+import com.baofeng.blog.entity.admin.ArticleTag;
 import com.baofeng.blog.entity.admin.Tag;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
@@ -55,4 +56,10 @@ public interface TagMapper {
      * @return 所有标签id和name
      */
     List<TagDictionaryResponse> getAllTags();
+    /**
+     * 插入 article_tags映射表记录
+     * @param ArticleTag
+     * @return 影响行数
+     */
+    int insertArticleTag(ArticleTag articleTag);
 }

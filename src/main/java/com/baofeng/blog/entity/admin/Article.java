@@ -7,12 +7,10 @@ import java.time.LocalDateTime;
 public class Article {
     private Long id;
     private String title;
-    private String slug;
     private String content;
     private String summary;
     private String coverImage;
     private Long authorId;
-    private Long categoryId;
     private ArticleStatus status;
     private Integer views;
     private Integer likes;

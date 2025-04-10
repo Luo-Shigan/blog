@@ -27,4 +27,8 @@ public interface UserMapper {
     int updateUserSelective(User user);
     int updatePassword(String username,@Param("password") String newPassword);
     //@Param("username")必须指定，因为resultmap定义好了映射java对象password
+    /**
+     * 根据用户名查询用户id
+     */
+    Long getIdByUsername(String username);
 } 

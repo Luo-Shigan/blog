@@ -4,6 +4,7 @@ import com.baofeng.blog.vo.admin.ArticleCRUDVO.*;
 import org.apache.ibatis.annotations.Mapper;
 // import org.apache.ibatis.annotations.Param;
 import java.util.List;
+import java.util.Locale.Category;
 @Mapper
 public interface ArticleMapper {
     /**
@@ -20,5 +21,4 @@ public interface ArticleMapper {
     int updateArticleSelective(Article article);
     Long getAuthorIdById(Long articleId);
     boolean isTitleExist(String title);
-
 }

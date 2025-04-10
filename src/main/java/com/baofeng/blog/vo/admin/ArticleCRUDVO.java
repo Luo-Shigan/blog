@@ -9,9 +9,8 @@ public class ArticleCRUDVO {
     public record CreateArticleRequest(
         String title,
         String content,
-        String slug,
         String summary,
-        Long authorId
+        String author
     ) {}
     /**
      * 文章分页请求参数
@@ -43,7 +42,6 @@ public class ArticleCRUDVO {
         private Long id;
         private String title;
         private String summary;
-        private String categoryName;
         private Integer viewCount;
         private Integer commentCount;
         private Integer likeCount;
@@ -52,6 +50,7 @@ public class ArticleCRUDVO {
         private ArticleStatus status;
         private String coverImage;
         private AuthorVO author;
+        private List<String> categoryNames;
     }
     public enum ArticleStatus {
         DRAFT, PUBLISHED, DELETED;
@@ -68,7 +67,20 @@ public class ArticleCRUDVO {
     }
 
     /**
-     * 前端文章请求表单
+     * 文章分类请求
      */
+    @Data
+    public static class CategoryRequest {
+        private String categoryName;
+        private Long articleId;
+    }
+    /**
+     * 文章标签请求 
+     */
+    @Data
+    public static class TagRequest {
+        private List<String> tagNames;
+        private Long articleId;
+    }
     
 }

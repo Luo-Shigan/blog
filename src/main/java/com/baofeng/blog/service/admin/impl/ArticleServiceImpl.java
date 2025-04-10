@@ -3,10 +3,17 @@ package com.baofeng.blog.service.admin.impl;
 import com.baofeng.blog.service.admin.ArticleService;
 import com.baofeng.blog.vo.admin.ArticleCRUDVO.*;
 import com.baofeng.blog.entity.admin.Article;
+import com.baofeng.blog.entity.admin.ArticleCategory;
 import com.baofeng.blog.entity.admin.ArticleImage;
+import com.baofeng.blog.entity.admin.ArticleTag;
 import com.baofeng.blog.entity.admin.Image;
+import com.baofeng.blog.entity.admin.Tag;
+import com.baofeng.blog.entity.admin.Category;
 import com.baofeng.blog.mapper.admin.ArticleMapper;
+import com.baofeng.blog.mapper.admin.CategoryMapper;
 import com.baofeng.blog.mapper.admin.ImageMapper;
+import com.baofeng.blog.mapper.admin.TagMapper;
+import com.baofeng.blog.mapper.admin.UserMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -34,26 +41,33 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
     private final ImageMapper imageMapper;
+    private final UserMapper userMapper;
+    private final CategoryMapper categoryMapper;
+    private final TagMapper tagMapper;
     @Value("${app.upload.dir}")
     private String uploadDir;
     @Override
-    public boolean createArticle(CreateArticleRequest articleRequest) {
+    public Long createArticle(CreateArticleRequest articleRequest) throws Exception {
         Article article = new Article();
         article.setTitle(articleRequest.title());
         article.setContent(articleRequest.content());
         article.setSummary(articleRequest.summary());
-        article.setAuthorId(articleRequest.authorId());
-        article.setSlug(articleRequest.slug());
-        article.setAuthorId(articleRequest.authorId());
+        Long authorId = userMapper.getIdByUsername(articleRequest.author());
+        if ( authorId == null) {
+            throw new Exception("没有此用户");
+        }
+        article.setAuthorId(authorId);
         article.setStatus(Article.ArticleStatus.DRAFT);
         LocalDateTime now = LocalDateTime.now();
         article.setCreatedAt(now);
         int rowsInserted = articleMapper.insertArticle(article);
 
         if(rowsInserted > 0){
-            return true;
+            //插入后自动回填文章id
+            Long articleId = article.getId();
+            return articleId;
         }else{
-            return false;
+            return null;
         }
     }
 
@@ -224,6 +238,53 @@ public class ArticleServiceImpl implements ArticleService {
             return imagePath;
         } else {
             throw new IOException("Failed to update article with image path");
+        }
+    }
+    @Override
+    public boolean addCategory(CategoryRequest request) {
+        String categoryName = request.getCategoryName();
+        Long articleId = request.getArticleId();
+        Category newCategory = new Category();
+        newCategory.setName(categoryName);
+        int rowsInserted = categoryMapper.createCategory(newCategory);
+        if ( rowsInserted > 0 ) {
+            Long newCategoryId = newCategory.getId();
+            ArticleCategory articleCategory = new ArticleCategory();
+            articleCategory.setArticleId(articleId);
+            articleCategory.setCategoryId(newCategoryId);
+            int rowsInserted1 = categoryMapper.insertCategoryReflect(articleCategory);
+            if ( rowsInserted1 > 0 ) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        
+    }
+
+    @Override
+    public boolean addTag(TagRequest request) {
+        List<String> tagNames = request.getTagNames();
+        Long articleId = request.getArticleId();
+        int tagNamesLen = tagNames.size();
+        int rowsInserted = 0;
+        int rowsInserted1 = 0;
+        for ( String tagName: tagNames ) {
+            Tag tag = new Tag();
+            tag.setName(tagName);
+            rowsInserted += tagMapper.createTag(tag);
+            Long tagId = tag.getId();
+            ArticleTag articleTag = new ArticleTag();
+            articleTag.setArticleId(articleId);
+            articleTag.setTagId(tagId);
+            rowsInserted1 += tagMapper.insertArticleTag(articleTag);
+        }
+        if ( rowsInserted >= tagNamesLen && rowsInserted1 >= tagNamesLen) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
