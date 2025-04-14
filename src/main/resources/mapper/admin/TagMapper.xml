@@ -57,6 +57,19 @@
         SELECT COUNT(*) FROM article_tags WHERE tag_id = #{id}
     </select>
 
+    <!--获取所有tag name-->
+    <select id="getAllTagName">
+        SELECT name FROM tags
+    </select>
+
+    <!--判断name是否在表中有记录,区分大小写-->
+    <select id="checkExactName">
+        SELECT EXISTS(
+            SELECT 1 FROM tags
+            WHERE name = #{name}
+        )
+    </select>
+
     <!-- 根据名称查询标签 -->
     <select id="getTagByName" resultMap="BaseResultMap">
         SELECT * FROM tags WHERE name = #{name} LIMIT 1

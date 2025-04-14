@@ -61,4 +61,15 @@ public interface CategoryMapper {
      * @return 影响行数量
      */
     int insertCategoryReflect(ArticleCategory articleCategory);
+    /**
+     * 获取所有分类名
+     * @return 所有分类名
+     */
+    List<String> getAllCategoryName();
+    /**
+     * 判断name是否在表中有记录
+     * @param name
+     * @return 0不存在/1已存在
+     */
+   boolean checkExactName(String name);
 } 

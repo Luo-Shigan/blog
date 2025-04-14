@@ -246,21 +246,22 @@ public class ArticleServiceImpl implements ArticleService {
         Long articleId = request.getArticleId();
         Category newCategory = new Category();
         newCategory.setName(categoryName);
-        int rowsInserted = categoryMapper.createCategory(newCategory);
-        if ( rowsInserted > 0 ) {
+       
+        boolean flag = categoryMapper.checkExactName(categoryName);
+        if ( !flag ) {
+            int rowsInserted = categoryMapper.createCategory(newCategory);
             Long newCategoryId = newCategory.getId();
             ArticleCategory articleCategory = new ArticleCategory();
             articleCategory.setArticleId(articleId);
             articleCategory.setCategoryId(newCategoryId);
             int rowsInserted1 = categoryMapper.insertCategoryReflect(articleCategory);
-            if ( rowsInserted1 > 0 ) {
+            if ( rowsInserted1 > 0  && rowsInserted > 0) {
                 return true;
             } else {
                 return false;
             }
-        } else {
-            return false;
         }
+        return true;
         
     }
 
@@ -268,18 +269,24 @@ public class ArticleServiceImpl implements ArticleService {
     public boolean addTag(TagRequest request) {
         List<String> tagNames = request.getTagNames();
         Long articleId = request.getArticleId();
-        int tagNamesLen = tagNames.size();
+        int tagNamesLen = 0;
         int rowsInserted = 0;
         int rowsInserted1 = 0;
         for ( String tagName: tagNames ) {
-            Tag tag = new Tag();
-            tag.setName(tagName);
-            rowsInserted += tagMapper.createTag(tag);
-            Long tagId = tag.getId();
-            ArticleTag articleTag = new ArticleTag();
-            articleTag.setArticleId(articleId);
-            articleTag.setTagId(tagId);
-            rowsInserted1 += tagMapper.insertArticleTag(articleTag);
+            boolean flag = tagMapper.checkExactName(tagName);
+            if ( flag ) {
+                continue;
+            } else {
+                tagNamesLen += 1;
+                Tag tag = new Tag();
+                tag.setName(tagName);
+                rowsInserted += tagMapper.createTag(tag);
+                Long tagId = tag.getId();
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setArticleId(articleId);
+                articleTag.setTagId(tagId);
+                rowsInserted1 += tagMapper.insertArticleTag(articleTag);
+            }
         }
         if ( rowsInserted >= tagNamesLen && rowsInserted1 >= tagNamesLen) {
             return true;

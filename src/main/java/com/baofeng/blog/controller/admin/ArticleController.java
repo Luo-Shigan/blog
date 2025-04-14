@@ -193,7 +193,7 @@ public class ArticleController {
         }
     }
     /**
-     * 增加分类接口
+     * 增加分类接口,如果表中没有则添加
      */
     @PostMapping("/uploadCategory")
     public ApiResponse<String> uploadCategory(@RequestBody CategoryRequest request){
@@ -209,7 +209,7 @@ public class ArticleController {
         }
     }
     /**
-     * 增加标签接口
+     * 增加标签接口,如果表中没有则添加
      */
     @PostMapping("/uploadTag")
     public ApiResponse<String> uploadTag(@RequestBody TagRequest request) {

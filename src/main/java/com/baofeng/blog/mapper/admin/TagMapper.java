@@ -62,4 +62,15 @@ public interface TagMapper {
      * @return 影响行数
      */
     int insertArticleTag(ArticleTag articleTag);
+    /**
+     * 获取所有tag name
+     * @return 所有tag name
+     */
+    List<String> getAllTagName();
+    /**
+     * 判断name是否在表中存在
+     * @param name
+     * @return 0不存在/1已存在
+     */
+    boolean checkExactName(String name);
 }
