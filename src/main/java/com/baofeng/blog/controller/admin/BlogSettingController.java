@@ -29,7 +29,7 @@ public class BlogSettingController {
         }
 
     }
-    @PutMapping("addView")
+    @PutMapping("/addView")
     public ApiResponse<String> addView(){
         try {
             boolean success = blogSettingService.addViews();

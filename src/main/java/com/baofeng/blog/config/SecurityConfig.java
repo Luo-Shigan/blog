@@ -13,8 +13,7 @@ import com.baofeng.blog.util.JwtTokenProvider;
 // import com.baofeng.blog.exception.CustomAccessDeniedHandler;
 // import com.baofeng.blog.exception.CustomAuthenticationEntryPoint;
 // import org.springframework.beans.factory.annotation.Autowired;
-
-
+//博客前台访问不需要token
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -24,7 +23,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/admin/users/register","/api/admin/users/login","/api/admin/users/refreshToken").permitAll()
+                .requestMatchers("/api/admin/users/register","/api/admin/users/login","/api/admin/users/refreshToken","/api/front/**").permitAll()
                 .anyRequest().authenticated() // 需要身份验证的请求
             )
             .csrf(csrf -> csrf.disable())
